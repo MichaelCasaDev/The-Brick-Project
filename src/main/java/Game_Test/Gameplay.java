@@ -13,264 +13,282 @@ import java.io.IOException;
 
 import javax.swing.Timer;
 
-import Main.Main;
+import Main.MainRunnable;
 import org.json.simple.parser.ParseException;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class Gameplay extends JPanel implements ActionListener, KeyListener {
-    // usefull global variables
-    private boolean play = false;
-    private int score = 0;
-    private int col = 10;
-    private int row = 3;
-    private int totalbricks = col * row;
+	// useful global variables
+	private boolean play = false;
+	private int score = 0;
+	private int col = 10;
+	private int row = 3;
+	private int totalbricks = col * row;
 
-    // Timer
-    private Timer timer;
-    private int delay = 8; // <- it modifies the ball speed (aka the update time of each frame)
+	private String level = "";
+	private JFrame mainWin = null;
+	private JFrame thisWin = null;
 
-    // paddle
-    private int playerX = 1920 / 2 - 200;
+	// Timer
+	private Timer timer;
+	private int delay = 8; // <- it modifies the ball speed (aka the update time of each frame)
 
-    // position of ball
-    private int ballposX = 120;
-    private int ballposY = 350;
-    private int ballXdir = -1;
-    private int ballYdir = -2;
+	// paddle
+	private int playerX = 1920 / 2 - 200;
 
-    private MapGenerator map;
+	// position of ball
+	private int ballposX = 120;
+	private int ballposY = 350;
+	private int ballXdir = -1;
+	private int ballYdir = -2;
 
-    public Gameplay() throws IOException, ParseException {
-        map = new MapGenerator(row, col);
+	private MapGenerator map;
 
-        generateBallPosition();
+	public Gameplay(String level, JFrame mainWin, JFrame thisWin) throws IOException, ParseException {
+		map = new MapGenerator(row, col, level);
 
-        addKeyListener(this);
-        setFocusable(true);
-        setFocusTraversalKeysEnabled(false);
+		this.level = level;
+		this.mainWin = mainWin;
+		this.thisWin = thisWin;
 
-        timer = new Timer(delay, this);
-        timer.start();
-    }
+		generateBallPosition();
 
-    public void paint(Graphics g) {
-        // background
-        g.setColor(Color.BLACK);
-        g.fillRect(1, 1, 1920, 1080);
+		addKeyListener(this);
+		setFocusable(true);
+		setFocusTraversalKeysEnabled(false);
+		
+		timer = new Timer(delay, this);
+		timer.start();
+	}
 
-        // drawing map
-        map.draw((Graphics2D) g);
+	public void paint(Graphics g) {
+		// background
+		g.setColor(Color.BLACK);
+		g.fillRect(1, 1, 1920, 1080);
 
-        // borders
-        g.setColor(Color.RED);
-        g.fillRect(0, 0, 3, 1080);
-        g.fillRect(0, 0, 1920, 3);
-        g.fillRect(1917, 0, 3, 1080);
+		// drawing map
+		map.draw((Graphics2D) g);
 
-        // the scores
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("serif", Font.BOLD, 25));
-        g.drawString("" + score, 1920 / 2, 30);
+		// borders
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, 3, 1080);
+		g.fillRect(0, 0, 1920, 3);
+		g.fillRect(1917, 0, 3, 1080);
 
-        // the paddle
-        g.setColor(Color.GREEN);
-        g.fillRect(playerX, 1050, 400, 8);
+		// the scores
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("serif", Font.BOLD, 25));
+		g.drawString("" + score, 1920 / 2, 30);
 
-        // the ball
-        g.setColor(Color.YELLOW);
-        g.fillOval(ballposX, ballposY, 20, 20);
+		// the paddle
+		g.setColor(Color.WHITE);
+		g.fillRect(playerX, 1050, 400, 8);
 
-        // when you won the game
-        if (totalbricks <= 0) {
-            play = false;
-            ballXdir = 0;
-            ballYdir = 0;
-            g.setColor(Color.GREEN);
-            g.setFont(new Font("serif", Font.BOLD, 30));
-            g.drawString("You Won", 1920 / 2, 300);
+		// the ball
+		g.setColor(Color.WHITE);
+		g.fillOval(ballposX, ballposY, 20, 20);
 
-            g.setColor(Color.GREEN);
-            g.setFont(new Font("serif", Font.BOLD, 20));
-            g.drawString("Press (Enter) to Restart", 1920 / 2, 350);
-        }
+		// when you won the game
+		if (totalbricks <= 0) {
+			play = false;
+			ballXdir = 0;
+			ballYdir = 0;
+			g.setColor(Color.GREEN);
+			g.setFont(new Font("serif", Font.BOLD, 30));
+			g.drawString("You Won", 1920 / 2, 300);
 
-        // when you lose the game
-        if (ballposY > 1080) {
-            play = false;
+			g.setColor(Color.GREEN);
+			g.setFont(new Font("serif", Font.BOLD, 20));
+			g.drawString("Press (Enter) to Restart", 1920 / 2, 350);
+		}
 
-            ballXdir = 0;
-            ballYdir = 0;
+		// when you lose the game
+		if (ballposY > 1080) {
+			play = false;
 
-            g.setColor(Color.RED);
-            g.setFont(new Font("serif", Font.BOLD, 30));
-            g.drawString("Game Over, Scores: " + score, 190, 300);
+			ballXdir = 0;
+			ballYdir = 0;
 
-            g.setColor(Color.RED);
-            g.setFont(new Font("serif", Font.BOLD, 20));
-            g.drawString("Press (Enter) to Restart", 230, 350);
+			g.setColor(Color.RED);
+			g.setFont(new Font("serif", Font.BOLD, 30));
+			g.drawString("Game Over, Scores: " + score, 190, 300);
 
-            timer.stop();
-        }
+			g.setColor(Color.RED);
+			g.setFont(new Font("serif", Font.BOLD, 20));
+			g.drawString("Press (Enter) to Restart", 230, 350);
 
-        g.dispose();
-    }
+			timer.stop();
+		}
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
+		g.dispose();
+	}
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-    }
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_SPACE && !play) {
-            play = true;
-        }
+	@Override
+	public void keyReleased(KeyEvent e) {
+	}
 
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT && play) {
-            if (playerX >= 1920 - 400) {
-                playerX = 1920 - 410;
-            } else {
-                moveRight();
-            }
-        }
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_SPACE && !play) {
+			play = true;
+		}
+		
+		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			play = false;
+			
+			thisWin.setVisible(false);
+			mainWin.setVisible(true);
+		}
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT && play) {
-            if (playerX < 10) {
-                playerX = 10;
-            } else {
-                moveLeft();
-            }
-        }
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT && play) {
+			if (playerX >= 1920 - 400) {
+				playerX = 1920 - 410;
+			} else {
+				moveRight();
+			}
+		}
 
-        if (e.getKeyCode() == KeyEvent.VK_ENTER && !play) {
-            timer.start();
+		if (e.getKeyCode() == KeyEvent.VK_LEFT && play) {
+			if (playerX < 10) {
+				playerX = 10;
+			} else {
+				moveLeft();
+			}
+		}
 
-            play = true;
+		if (e.getKeyCode() == KeyEvent.VK_ENTER && !play) {
+			timer.start();
 
-            ballXdir = -1;
-            ballYdir = -2;
+			play = true;
 
-            playerX = 1920 / 2 - 200;
+			ballXdir = -1;
+			ballYdir = -2;
 
-            score = 0;
-            totalbricks = row * col;
+			playerX = 1920 / 2 - 200;
 
-            generateBallPosition();
+			score = 0;
+			totalbricks = row * col;
 
-            try {
-                map = new MapGenerator(row, col);
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            } catch (ParseException parseException) {
-                parseException.printStackTrace();
-            }
+			generateBallPosition();
 
-            repaint();
-        }
-    }
+			try {
+				map = new MapGenerator(row, col, level);
+			} catch (IOException ioException) {
+				ioException.printStackTrace();
+			} catch (ParseException parseException) {
+				parseException.printStackTrace();
+			}
 
-    // This method is called automatically through the Timer (MAIN GAME LOGIC HERE)
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        timer.start();
+			repaint();
+		}
+	}
 
-        if (!play) {
-            return;
-        }
-        // check ball collision with the paddle
-        if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(playerX, 1050, 400, 8)) && ballYdir > 0) {
-            ballYdir = -ballYdir;
+	// This method is called automatically through the Timer (MAIN GAME LOGIC HERE)
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		timer.start();
 
-            playSound("hit_paddle.wav");
-        }
+		if (!play) {
+			return;
+		}
+		// check ball collision with the paddle
+		if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(playerX, 1050, 400, 8))
+				&& ballYdir > 0) {
+			ballYdir = -ballYdir;
 
-        // check map collision with the ball
-        for (int i = 0; i < map.map.length; i++) {
-            for (int j = 0; j < map.map[0].length; j++) {
-                if (map.map[i][j] != 0) {
-                    int brickX = j * map.brickWidth + 80;
-                    int brickY = i * map.brickHeight + 50;
-                    int brickWidth = map.brickWidth;
-                    int brickHeight = map.brickHeight;
+			playSound("sounds/hit_paddle.wav");
+		}
 
-                    Rectangle brickRect = new Rectangle(brickX, brickY, brickWidth, brickHeight);
-                    Rectangle ballRect = new Rectangle(ballposX, ballposY, 20, 20);
+		// check map collision with the ball
+		for (int i = 0; i < map.map.length; i++) {
+			for (int j = 0; j < map.map[0].length; j++) {
+				if (map.map[i][j] != 0) {
+					int brickX = j * map.brickWidth + 80;
+					int brickY = i * map.brickHeight + 50;
+					int brickWidth = map.brickWidth;
+					int brickHeight = map.brickHeight;
 
-                    if (ballRect.intersects(brickRect)) {
-                        map.setBrickValue(0, i, j);
-                        score += 5;
-                        totalbricks--;
+					Rectangle brickRect = new Rectangle(brickX, brickY, brickWidth, brickHeight);
+					Rectangle ballRect = new Rectangle(ballposX, ballposY, 20, 20);
 
-                        playSound("hit.wav");
+					if (ballRect.intersects(brickRect)) {
+						map.setBrickValue(0, i, j);
+						score += 5;
+						totalbricks--;
 
-                        // when ball hit right or left of brick
-                        if (ballposX + 19 <= brickRect.x || ballposX + 1 >= brickRect.x + brickRect.width) {
-                            ballXdir = -ballXdir;
-                        } else { // when ball hits top or bottom of brick
-                            ballYdir = -ballYdir;
-                        }
-                    }
-                }
-            }
-        }
+						playSound("sounds/hit.wav");
 
-        ballposX += ballXdir;
-        ballposY += ballYdir;
+						// when ball hit right or left of brick
+						if (ballposX + 19 <= brickRect.x || ballposX + 1 >= brickRect.x + brickRect.width) {
+							ballXdir = -ballXdir;
+						} else { // when ball hits top or bottom of brick
+							ballYdir = -ballYdir;
+						}
+					}
+				}
+			}
+		}
 
-        // check ball collision with border left
-        if (ballposX < 0) {
-            ballXdir = -ballXdir;
+		ballposX += ballXdir;
+		ballposY += ballYdir;
 
-            playSound("hit_wall.wav");
-        }
+		// check ball collision with border left
+		if (ballposX < 0) {
+			ballXdir = -ballXdir;
 
-        // check ball collision with border top
-        if (ballposY < 0) {
-            ballYdir = -ballYdir;
+			playSound("sounds/hit_wall.wav");
+		}
 
-            playSound("hit_wall.wav");
-        }
+		// check ball collision with border top
+		if (ballposY < 0) {
+			ballYdir = -ballYdir;
 
-        // check ball collision with border right
-        if (ballposX > 1910) {
-            ballXdir = -ballXdir;
+			playSound("sounds/hit_wall.wav");
+		}
 
-            playSound("hit_wall.wav");
-        }
+		// check ball collision with border right
+		if (ballposX > 1897) {
+			ballXdir = -ballXdir;
 
-        repaint();
-    }
+			playSound("sounds/hit_wall.wav");
+		}
 
-    private void moveLeft() {
-        play = true;
-        playerX -= 15;
-    }
+		repaint();
+	}
 
-    private void moveRight() {
-        play = true;
-        playerX += 15;
-    }
+	private void moveLeft() {
+		play = true;
+		playerX -= 15;
+	}
 
-    private void generateBallPosition() {
-        ballposX = (int) (Math.random() * 1920);
-        ballposY = (int) (Math.random() * 500) + 500;
-    }
+	private void moveRight() {
+		play = true;
+		playerX += 15;
+	}
 
-    private void playSound(String soundPath) {
-        try {
-            Clip clip = AudioSystem.getClip();
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(Main.class.getClassLoader().getResourceAsStream(soundPath));
-            clip.open(inputStream);
-            clip.start();
-        } catch (Exception xe) {
-            System.err.println(xe.getMessage());
-        }
-    }
+	private void generateBallPosition() {
+		ballposX = (int) (Math.random() * 1897) + 20;
+		ballposY = (int) (Math.random() * 500) + 500;
+	}
+
+	private void playSound(String soundPath) {
+		try {
+			Clip clip = AudioSystem.getClip();
+			AudioInputStream inputStream = AudioSystem
+					.getAudioInputStream(MainRunnable.class.getClassLoader().getResourceAsStream(soundPath));
+			clip.open(inputStream);
+			clip.start();
+		} catch (Exception xe) {
+			System.err.println(xe.getMessage());
+		}
+	}
 }
