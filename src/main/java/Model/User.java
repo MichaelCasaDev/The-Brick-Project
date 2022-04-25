@@ -14,17 +14,16 @@ import java.util.UUID;
 public class User {
 	private String uuid;
 	private String username;
-	private int totBricksBreak;
-	private int totPlayGame;
+	private long totBricksBreak;
+	private long totPlayGame;
 	private ArrayList<String> level;
-	
+
 	public User() {
 		this.uuid = UUID.randomUUID().toString(); // Generate random UUID for new user
 		this.username = "Player0";
 		this.totBricksBreak = 0;
 		this.totPlayGame = 0;
 		this.level = new ArrayList<>();
-
 
 		saveToJSON();
 	}
@@ -36,19 +35,19 @@ public class User {
 			 * ############################## */
 			JSONParser parser = new JSONParser();
 			JSONObject jsonFile = (JSONObject) parser.parse(file);
-			JSONObject uuid = (JSONObject) jsonFile.get("uuid");
-			JSONObject username = (JSONObject) jsonFile.get("username");
-			JSONObject totBricksBreak = (JSONObject) jsonFile.get("totBricksBreak");
-			JSONObject totPlayGame = (JSONObject) jsonFile.get("totPlayGame");
+			String uuid = (String) jsonFile.get("uuid");
+			String username = (String) jsonFile.get("username");
+			long totBricksBreak = (long) jsonFile.get("totBricksBreak");
+			long totPlayGame = (long) jsonFile.get("totPlayGame");
 			JSONArray level = (JSONArray) jsonFile.get("level");
 
 			/* ##############################
 			 * Save data from parsed JSON File
 			 * ############################## */
-			this.uuid = uuid.toString();
-			this.username = username.toString();
-			this.totBricksBreak = Integer.parseInt(totBricksBreak.toString());
-			this.totPlayGame = Integer.parseInt(totPlayGame.toString());
+			this.uuid = uuid;
+			this.username = username;
+			this.totBricksBreak = totBricksBreak;
+			this.totPlayGame = totPlayGame;
 
 			for(Object l : level) {
 				level.add(l.toString());
@@ -60,24 +59,15 @@ public class User {
 		}
 	}
 
-	public User(String username, int totBricksBreak, int totPlayGame, ArrayList<String> level) {
-		this.username = username;
-		this.totBricksBreak = totBricksBreak;
-		this.totPlayGame = totPlayGame;
-		this.level = level;
-
-		saveToJSON();
-	}
-
 	public String getUsername() {
 		return username;
 	}
 
-	public int getTotBricksBreak() {
+	public long getTotBricksBreak() {
 		return totBricksBreak;
 	}
 
-	public int getTotPlayGame() {
+	public long getTotPlayGame() {
 		return totPlayGame;
 	}
 

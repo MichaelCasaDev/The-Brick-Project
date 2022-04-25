@@ -36,7 +36,13 @@ public class MainRunnable {
             }
         });
 
-        // Generate useful files if not present (levels, users, sounds, global)
+        filesManager(); // Generate useful files if not present (levels, users, sounds, global)
+
+        window.setPane(mainMenuPanel); // Default contentPane
+        new PanelController(window, mainMenuPanel, impostazioniPanel, giocaPanel, informazioniPanel, comeSiGiocaPanel);
+    }
+
+    private static void filesManager() {
         if(!new File(GlobalVars.dirBase).exists()) {
             System.out.println("Need to create 'The Brick' data folders and files");
 
@@ -49,24 +55,24 @@ public class MainRunnable {
                 new File(GlobalVars.dirBase + "levels").mkdir();
                 final String dirLevels = MainRunnable.class.getClassLoader().getResource("levels").getPath();
                 File folderLevels = new File(dirLevels);
-                for(File fileLevel : folderLevels.listFiles()) {
-                    Files.copy(fileLevel.toPath(), new File(GlobalVars.dirBase + "levels/" + fileLevel.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                for(File file : folderLevels.listFiles()) {
+                    Files.copy(file.toPath(), new File(GlobalVars.dirBase + "levels/" + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
 
                 // Sounds
                 new File(GlobalVars.dirBase + "sounds").mkdir();
                 final String dirSounds = MainRunnable.class.getClassLoader().getResource("sounds").getPath();
                 File folderSounds = new File(dirSounds);
-                for(File fileLevel : folderSounds.listFiles()) {
-                    Files.copy(fileLevel.toPath(), new File(GlobalVars.dirBase + "sounds/" + fileLevel.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                for(File file : folderSounds.listFiles()) {
+                    Files.copy(file.toPath(), new File(GlobalVars.dirBase + "sounds/" + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
 
                 // Users
                 new File(GlobalVars.dirBase + "users").mkdir();
                 final String dirUsers = MainRunnable.class.getClassLoader().getResource("users").getPath();
                 File folderUsers = new File(dirUsers);
-                for(File fileLevel : folderUsers.listFiles()) {
-                    Files.copy(fileLevel.toPath(), new File(GlobalVars.dirBase + "users/" + fileLevel.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                for(File file : folderUsers.listFiles()) {
+                    Files.copy(file.toPath(), new File(GlobalVars.dirBase + "users/" + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
 
                 // Global
@@ -78,8 +84,5 @@ public class MainRunnable {
                 e.printStackTrace();
             }
         }
-
-        window.setContentPane(mainMenuPanel); // Default contentPane
-        new PanelController(window, mainMenuPanel, impostazioniPanel, giocaPanel, informazioniPanel, comeSiGiocaPanel);
     }
 }

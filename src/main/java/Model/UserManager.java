@@ -1,5 +1,9 @@
 package Model;
 
+import Main.GlobalVars;
+import Main.MainRunnable;
+
+import java.io.File;
 import java.util.ArrayList;
 
 public class UserManager {
@@ -7,6 +11,8 @@ public class UserManager {
 
     public UserManager() {
         users = new ArrayList<>();
+
+        loadData();
     }
 
     public void add(User p) {
@@ -27,5 +33,13 @@ public class UserManager {
 
     public ArrayList<User> getList() {
         return users;
+    }
+
+    public void loadData() {
+        final String dirUsers = GlobalVars.dirBase + "users";
+        File folder = new File(dirUsers);
+        for(File file : folder.listFiles()) {
+            add(new User(file.getPath()));
+        }
     }
 }

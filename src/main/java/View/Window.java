@@ -15,6 +15,8 @@ public class Window extends JFrame {
 	private JPanel contentPane;
 	private JLabel lblNewLabel;
 
+	private JPanel oldComp;
+
 	/**
 	 * Create the frame.
 	 */
@@ -31,7 +33,6 @@ public class Window extends JFrame {
 		if(resource != null) setIconImage(new ImageIcon(resource).getImage());
 
 		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
@@ -44,5 +45,14 @@ public class Window extends JFrame {
 
 	public JPanel getContentPane() {
 		return contentPane;
+	}
+
+	public void setPane(JPanel p) {
+		setContentPane(p);
+
+		p.setFocusable(true);
+		p.requestFocus();
+		p.requestFocusInWindow();
+		revalidate();
 	}
 }

@@ -14,9 +14,11 @@ public class Level {
 	private String name;
 	private String path;
 	private boolean done;
-	private int totBricks;
-	private int ballSpeed;
+	private long totBricks;
+	private long breakBricks;
+	private long ballSpeed;
 	private int[][] map;
+	private JSONArray mapJSON;
 
 	public Level(String path) {
 		try (FileReader file = new FileReader(path)) {
@@ -25,23 +27,26 @@ public class Level {
 			 * ############################## */
 			JSONParser parser = new JSONParser();
 			JSONObject jsonFile = (JSONObject) parser.parse(file);
+
 			JSONArray map = (JSONArray) jsonFile.get("map");
-			JSONObject name = (JSONObject) jsonFile.get("name");
-			JSONObject done = (JSONObject) jsonFile.get("done");
-			JSONObject uuid = (JSONObject) jsonFile.get("uuid");
-			JSONObject ballSpeed = (JSONObject) jsonFile.get("ballSpeed");
-			JSONObject totBricks = (JSONObject) jsonFile.get("totBricks");
+			String name = (String) jsonFile.get("name");
+			boolean done = (boolean) jsonFile.get("done");
+			String uuid = (String) jsonFile.get("uuid");
+			long ballSpeed = (long) jsonFile.get("ballSpeed");
+			long totBricks = (long) jsonFile.get("totBricks");
 
 			/* ##############################
 			 * Save data from parsed JSON File
 			 * ############################## */
-			this.uuid = uuid.toString();
-			this.name = name.toString();
-			this.done = done.toString().equals("true");
+			this.uuid = uuid;
+			this.name = name;
+			this.done = done;
 			this.path = path;
-			this.totBricks = Integer.parseInt(totBricks.toString());
-			this.ballSpeed = Integer.parseInt(ballSpeed.toString());
+			this.totBricks = totBricks;
+			this.breakBricks = totBricks;
+			this.ballSpeed = ballSpeed;
 			this.map = new int[GlobalVars.gameRows][GlobalVars.gameCols];
+			this.mapJSON = map;
 
 			/* ##############################
 			 * Generate map from JSON Array
@@ -76,11 +81,11 @@ public class Level {
 		return path;
 	}
 
-	public int getTotBricks() {
+	public long getTotBricks() {
 		return totBricks;
 	}
 
-	public int getBallSpeed() {
+	public long getBallSpeed() {
 		return ballSpeed;
 	}
 
@@ -93,9 +98,17 @@ public class Level {
 		saveToJSON();
 	}
 
+	public void removeBrick() {
+		breakBricks--;
+	}
+
+	public long getBreakBricks() {
+		return breakBricks;
+	}
+
 	@Override
 	public String toString() {
-		return name;
+		return name + " - " + (done ? "completato" : "non completato");
 	}
 
 	private void saveToJSON() {
@@ -104,7 +117,7 @@ public class Level {
 		jsonObj.put("name", name);
 		jsonObj.put("totBricks", totBricks);
 		jsonObj.put("ballSpeed", ballSpeed);
-		jsonObj.put("map", map);
+		jsonObj.put("map", mapJSON);
 		jsonObj.put("done", done);
 
 		try (FileWriter file = new FileWriter(path)) {

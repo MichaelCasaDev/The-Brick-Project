@@ -1,6 +1,9 @@
 package Control;
 
+import Model.Level;
+import Model.LevelManager;
 import View.*;
+import View.GamePlay;
 
 import javax.swing.*;
 
@@ -40,25 +43,44 @@ public class PanelController {
         });
 
         // impostazioniPanel
-        impostazioniPanel.getBtnTornaIndietro().addActionListener(e -> tornaIndietroBtnHandler());
+        impostazioniPanel.getBtnTornaIndietro().addActionListener(e -> backToMainMenu());
 
         // giocaPanel
-        giocaPanel.getBtnTornaIndietro().addActionListener(e -> tornaIndietroBtnHandler());
+        LevelManager x = new LevelManager();
+        giocaPanel.getBtnTornaIndietro().addActionListener(e -> backToMainMenu());
+        giocaPanel.getList().setModel(x.getListModel());
+
+        giocaPanel.getList().addListSelectionListener(e -> {
+            giocaPanel.getBtnGioca().setEnabled(true);
+        });
+
+        giocaPanel.getBtnGioca().addActionListener(e -> {
+            Level selectedLevel = (Level) giocaPanel.getList().getSelectedValue();
+            GamePlay gamePlay = new GamePlay(selectedLevel);
+
+            /*
+            gamePlay.addMenuListener(e -> {
+
+            });
+            */
+
+            window.setPane(gamePlay);
+            window.revalidate();
+        });
 
         // informazioniPanel
-        informazioniPanel.getBtnTornaIndietro().addActionListener(e -> tornaIndietroBtnHandler());
+        informazioniPanel.getBtnTornaIndietro().addActionListener(e -> backToMainMenu());
 
         // comeSiGiocaPanel
-        comeSiGiocaPanel.getBtnTornaIndietro().addActionListener(e -> tornaIndietroBtnHandler());
+        comeSiGiocaPanel.getBtnTornaIndietro().addActionListener(e -> backToMainMenu());
     }
 
-    private void tornaIndietroBtnHandler() {
-        window.setContentPane(mainMenuPanel);
-        window.revalidate();
+    private void backToMainMenu() {
+        window.setPane(mainMenuPanel);
+        giocaPanel.getBtnGioca().setEnabled(false);
     }
 
     private void changePanel(JPanel newPanel) {
-        window.setContentPane(newPanel);
-        window.revalidate();
+        window.setPane(newPanel);
     }
 }

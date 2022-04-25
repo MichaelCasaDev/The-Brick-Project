@@ -1,6 +1,10 @@
 package Model;
 
+import Main.GlobalVars;
+import Main.MainRunnable;
+
 import javax.swing.*;
+import java.io.File;
 import java.util.ArrayList;
 
 public class LevelManager {
@@ -8,6 +12,8 @@ public class LevelManager {
 
     public LevelManager() {
         levels = new ArrayList<>();
+
+        loadData();
     }
 
     public void add(Level l) {
@@ -22,5 +28,13 @@ public class LevelManager {
         DefaultListModel<Level> model = new DefaultListModel<>();
         model.addAll(levels);
         return model;
+    }
+
+    public void loadData() {
+        final String dirUsers = GlobalVars.dirBase + "levels";
+        File folder = new File(dirUsers);
+        for(File file : folder.listFiles()) {
+            add(new Level(file.getPath()));
+        }
     }
 }

@@ -31,6 +31,7 @@ public class ImpostazioniPanel extends JPanel {
 	private JLabel lblTotPlayGame;
 	private JLabel lblLevel;
 	private JButton btnSalvaPath;
+	private JButton btnAggiungi;
 
 	/**
 	 * Create the panel.
@@ -109,15 +110,15 @@ public class ImpostazioniPanel extends JPanel {
 		separator.setBounds(857, 156, 12, 79);
 		add(separator);
 
-		lblTotBricksBreak = new JLabel("0");
+		lblTotBricksBreak = new JLabel("-");
 		lblTotBricksBreak.setBounds(881, 160, 61, 16);
 		add(lblTotBricksBreak);
 
-		lblTotPlayGame = new JLabel("0");
+		lblTotPlayGame = new JLabel("-");
 		lblTotPlayGame.setBounds(881, 191, 61, 16);
 		add(lblTotPlayGame);
 
-		lblLevel = new JLabel("0");
+		lblLevel = new JLabel("-");
 		lblLevel.setBounds(881, 219, 61, 16);
 		add(lblLevel);
 
@@ -125,6 +126,10 @@ public class ImpostazioniPanel extends JPanel {
 		btnSalvaPath.setEnabled(false);
 		btnSalvaPath.setBounds(138, 282, 130, 29);
 		add(btnSalvaPath);
+		
+		btnAggiungi = new JButton("+");
+		btnAggiungi.setBounds(276, 155, 45, 29);
+		add(btnAggiungi);
 
 	}
 
@@ -166,5 +171,9 @@ public class ImpostazioniPanel extends JPanel {
 
 	public JButton getBtnSalvaPath() {
 		return btnSalvaPath;
+	}
+
+	public JButton getBtnAggiungi(){
+		return btnAggiungi;
 	}
 }
