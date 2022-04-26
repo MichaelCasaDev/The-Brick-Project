@@ -1,7 +1,6 @@
 package Model;
 
 import Main.GlobalVars;
-import Main.MainRunnable;
 
 import java.io.File;
 import java.util.ArrayList;

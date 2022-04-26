@@ -1,7 +1,6 @@
 package Model;
 
 import Main.GlobalVars;
-import Main.MainRunnable;
 
 import javax.swing.*;
 import java.io.File;

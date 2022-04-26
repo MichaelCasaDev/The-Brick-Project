@@ -3,19 +3,15 @@ package View;
 import Main.GlobalVars;
 import Main.MainRunnable;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.net.URL;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 public class Window extends JFrame {
-
 	private JPanel contentPane;
 	private JLabel lblNewLabel;
-
-	private JPanel oldComp;
 
 	/**
 	 * Create the frame.
@@ -41,10 +37,6 @@ public class Window extends JFrame {
 		contentPane.add(lblNewLabel, BorderLayout.CENTER);
 
 		setVisible(true);
-	}
-
-	public JPanel getContentPane() {
-		return contentPane;
 	}
 
 	public void setPane(JPanel p) {

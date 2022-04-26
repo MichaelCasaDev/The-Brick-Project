@@ -48,18 +48,7 @@ public class Level {
 			this.map = new int[GlobalVars.gameRows][GlobalVars.gameCols];
 			this.mapJSON = map;
 
-			/* ##############################
-			 * Generate map from JSON Array
-			 * ############################## */
-			int pos = 0;
-			for (int i = 0; i < GlobalVars.gameRows; i++) {
-				for (int j = 0; j < GlobalVars.gameCols; j++) {
-					int block = Integer.parseInt(map.get(pos).toString());
-					pos++;
-
-					this.map[i][j] = block;
-				}
-			}
+			reloadMap();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -104,6 +93,21 @@ public class Level {
 
 	public long getBreakBricks() {
 		return breakBricks;
+	}
+
+	public void reloadMap() {
+		/* ##############################
+		 * Generate map from JSON Array
+		 * ############################## */
+		int pos = 0;
+		for (int i = 0; i < GlobalVars.gameRows; i++) {
+			for (int j = 0; j < GlobalVars.gameCols; j++) {
+				int block = Integer.parseInt(mapJSON.get(pos).toString());
+				pos++;
+
+				this.map[i][j] = block;
+			}
+		}
 	}
 
 	@Override
