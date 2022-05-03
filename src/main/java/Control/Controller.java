@@ -1,16 +1,15 @@
 package Control;
 
-import Main.GameplayEvents;
-import Model.Level;
-import Model.LevelManager;
+import Main.GlobalVars;
+import Model.*;
 import View.*;
-import View.GamePlay;
-import View.Overlays.EndGameMenu;
-import View.Overlays.InGameMenu;
+import View.EndGameScreen;
 import View.Window;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Controller {
     private Window window;
@@ -20,11 +19,9 @@ public class Controller {
     private GiocaPanel giocaPanel;
     private InformazioniPanel informazioniPanel;
     private ComeSiGiocaPanel comeSiGiocaPanel;
+    private EndGameScreen endGameScreen;
 
-    private EndGameMenu endGameMenu;
-    private InGameMenu inGameMenu;
-
-    public Controller(Window window, MainMenuPanel mainMenuPanel, ImpostazioniPanel impostazioniPanel, GiocaPanel giocaPanel, InformazioniPanel informazioniPanel, ComeSiGiocaPanel comeSiGiocaPanel, EndGameMenu endGameMenu, InGameMenu inGameMenu) {
+    public Controller(Window window, MainMenuPanel mainMenuPanel, ImpostazioniPanel impostazioniPanel, GiocaPanel giocaPanel, InformazioniPanel informazioniPanel, ComeSiGiocaPanel comeSiGiocaPanel, EndGameScreen endGameScreen) {
         this.window = window;
 
         this.mainMenuPanel = mainMenuPanel;
@@ -32,26 +29,64 @@ public class Controller {
         this.giocaPanel = giocaPanel;
         this.informazioniPanel = informazioniPanel;
         this.comeSiGiocaPanel = comeSiGiocaPanel;
-
-        this.endGameMenu = endGameMenu;
-        this.inGameMenu = inGameMenu;
+        this.endGameScreen = endGameScreen;
 
         listeners();
     }
 
     private void listeners() {
+        UserManager y = new UserManager();
+        LevelManager x = new LevelManager();
+        GlobalManager z = new GlobalManager(GlobalVars.dirBase + "global.json");
+
         // mainMenuPanel
-        mainMenuPanel.getBtnImpostazioni().addActionListener(e -> changePanel(impostazioniPanel));
+        mainMenuPanel.getBtnImpostazioni().addActionListener(e -> {
+            changePanel(impostazioniPanel);
+
+            impostazioniPanel.getLblLevel().setText(y.get(z.getLastUser()).getLevel());
+            impostazioniPanel.getLblTotBricksBreak().setText("" + y.get(z.getLastUser()).getTotBricksBreak());
+            impostazioniPanel.getLblTotPlayGame().setText("" + y.get(z.getLastUser()).getTotPlayGame());
+        });
         mainMenuPanel.getBtnGioca().addActionListener(e -> changePanel(giocaPanel));
         mainMenuPanel.getBtnInformazioni().addActionListener(e -> changePanel(informazioniPanel));
         mainMenuPanel.getBtnComeSiGioca().addActionListener(e -> changePanel(comeSiGiocaPanel));
         mainMenuPanel.getBtnEsci().addActionListener(e -> exitSafe());
+        mainMenuPanel.getLblUsername().setText("Benvenuto: " + y.get(z.getLastUser()).toString());
 
         // impostazioniPanel
+        for(User u : y.getList()) {
+            impostazioniPanel.getComboBoxUtenti().addItem(u);
+        }
+
         impostazioniPanel.getBtnTornaIndietro().addActionListener(e -> backToMainMenu());
+        impostazioniPanel.getTextFieldUsername().setText(y.get(z.getLastUser()).getUsername());
+        impostazioniPanel.getChckbxSuoni().setSelected(y.get(z.getLastUser()).getSounds());
+        impostazioniPanel.getBtnSalva().addActionListener((e) -> {
+            y.get(z.getLastUser()).setUsername(impostazioniPanel.getTextFieldUsername().getText());
+            y.get(z.getLastUser()).setSounds(impostazioniPanel.getChckbxSuoni().isSelected());
+
+            // Reload users
+            for(User u : y.getList()) {
+                impostazioniPanel.getComboBoxUtenti().addItem(u);
+            }
+
+            // Reload user username
+            mainMenuPanel.getLblUsername().setText("Benvenuto: " + y.get(z.getLastUser()).toString());
+        });
+        impostazioniPanel.getBtnReset().addActionListener((e) -> {
+            y.get(z.getLastUser()).setLevel("0");
+            y.get(z.getLastUser()).setTotBricksBreak(0);
+            y.get(z.getLastUser()).setTotPlayGame(0);
+
+            impostazioniPanel.getLblLevel().setText(y.get(z.getLastUser()).getLevel());
+            impostazioniPanel.getLblTotBricksBreak().setText("" + y.get(z.getLastUser()).getTotBricksBreak());
+            impostazioniPanel.getLblTotPlayGame().setText("" + y.get(z.getLastUser()).getTotPlayGame());
+        });
+        impostazioniPanel.getComboBoxUtenti().addActionListener(e -> {
+            z.setLastUser((User) impostazioniPanel.getComboBoxUtenti().getSelectedItem());
+        });
 
         // giocaPanel
-        LevelManager x = new LevelManager();
         giocaPanel.getBtnTornaIndietro().addActionListener(e -> backToMainMenu());
         giocaPanel.getList().setModel(x.getListModel());
         giocaPanel.getList().addListSelectionListener(e -> giocaPanel.getBtnGioca().setEnabled(true));
@@ -60,43 +95,31 @@ public class Controller {
             Level selectedLevel = (Level) giocaPanel.getList().getSelectedValue();
             GamePlay gamePlay = new GamePlay(selectedLevel);
 
-            gamePlay.addGameplayListener(new GameplayEvents() {
-                @Override
-                public void inGameMenuOpen() {
-                    changePanel(inGameMenu);
+            // Reset some things
+            giocaPanel.getList().clearSelection();
+            giocaPanel.getBtnGioca().setSelected(false);
+
+            // Custom gameplay listeners for endGame screen
+            gamePlay.addGameplayListener(win -> {
+                if(win) {
+                    endGameScreen.getLblWin().setText("Hai vinto!");
+                    endGameScreen.getLblWin().setForeground(Color.GREEN);
+                } else {
+                    endGameScreen.getLblWin().setText("Hai perso!");
+                    endGameScreen.getLblWin().setForeground(Color.RED);
                 }
 
-                @Override
-                public void endMenuOpen(boolean win) {
-                    if(win) {
-                        endGameMenu.getLblWin().setText("Hai vinto!");
-                        endGameMenu.getLblWin().setForeground(Color.GREEN);
-                    } else {
-                        endGameMenu.getLblWin().setText("Hai perso!");
-                        endGameMenu.getLblWin().setForeground(Color.RED);
-                    }
+                endGameScreen.getLblBestTimeLevel().setText("--:--");
+                endGameScreen.getLblUserTime().setText(gamePlay.getTimeStr());
 
-                    endGameMenu.getLblBestTimeLevel().setText("--");
-                    endGameMenu.getLblUserTime().setText("--");
-
-                    changePanel(endGameMenu);
-                }
+                changePanel(endGameScreen);
             });
 
             changePanel(gamePlay);
-
-
-            inGameMenu.getBtnEsci().addActionListener(ev -> exitSafe());
-            inGameMenu.getBtnBackGiocaPanel().addActionListener(ev -> changePanel(giocaPanel));
-            inGameMenu.getBtnRiprendi().addActionListener(ev -> {
-                changePanel(gamePlay);
-                gamePlay.riprendi();
-
-            });
-
-            endGameMenu.getBtnEsci().addActionListener(ev -> exitSafe());
-            endGameMenu.getBtnBackGiocaPanel().addActionListener(ev -> changePanel(giocaPanel));
         });
+
+        endGameScreen.getBtnEsci().addActionListener(ev -> exitSafe());
+        endGameScreen.getBtnBackGiocaPanel().addActionListener(ev -> changePanel(giocaPanel));
 
         // informazioniPanel
         informazioniPanel.getBtnTornaIndietro().addActionListener(e -> backToMainMenu());

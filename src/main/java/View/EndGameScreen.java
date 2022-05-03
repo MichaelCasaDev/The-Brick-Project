@@ -1,4 +1,4 @@
-package View.Overlays;
+package View;
 
 import Main.GlobalVars;
 
@@ -10,7 +10,7 @@ import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
 
-public class EndGameMenu extends JPanel {
+public class EndGameScreen extends JPanel {
 	private JLabel lblWin;
 	private JLabel lblNewLabel_1;
 	private JLabel lblNewLabel_2;
@@ -24,14 +24,15 @@ public class EndGameMenu extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public EndGameMenu() {
+	public EndGameScreen() {
 		setLayout(null);
 		setSize(GlobalVars.frameWidth, GlobalVars.frameHeight);
 
 		lblWin = new JLabel("Hai vinto!");
+		lblWin.setHorizontalAlignment(SwingConstants.CENTER);
 		lblWin.setForeground(Color.GREEN);
 		lblWin.setFont(new Font("Lucida Grande", Font.PLAIN, 32));
-		lblWin.setBounds(608, 128, 149, 38);
+		lblWin.setBounds(560, 128, 246, 38);
 		add(lblWin);
 		
 		panel = new JPanel();
@@ -40,11 +41,11 @@ public class EndGameMenu extends JPanel {
 		add(panel);
 		panel.setLayout(null);
 		
-		lblNewLabel_1 = new JLabel("Tempo migliore livello:");
+		lblNewLabel_1 = new JLabel("Tempo migliore globale");
 		lblNewLabel_1.setBounds(0, 0, 149, 16);
 		panel.add(lblNewLabel_1);
 		
-		lblNewLabel_2 = new JLabel("Il tuo tempo:");
+		lblNewLabel_2 = new JLabel("Il tuo tempo");
 		lblNewLabel_2.setBounds(0, 28, 149, 16);
 		panel.add(lblNewLabel_2);
 		

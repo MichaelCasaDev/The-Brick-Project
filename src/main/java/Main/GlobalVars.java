@@ -21,4 +21,7 @@ public class GlobalVars {
     public static final Color borderColor = new Color(255, 255, 255);
     public static final Color paddleColor = new Color(128, 255, 210);
     public static final Color ballColor = new Color(108, 110, 234);
+    public static final Color scoreColor = new Color(255, 255, 255);
+    public static final Color timerColor = new Color(255, 255, 255);
+    public static final Color initialTextColor = new Color(255, 255, 255);
 }

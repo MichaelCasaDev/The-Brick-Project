@@ -6,14 +6,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class Level {
 	private String uuid;
+	private String next_uuid;
 	private String name;
 	private String path;
-	private boolean done;
 	private long totBricks;
 	private long breakBricks;
 	private long ballSpeed;
@@ -27,11 +25,10 @@ public class Level {
 			 * ############################## */
 			JSONParser parser = new JSONParser();
 			JSONObject jsonFile = (JSONObject) parser.parse(file);
-
 			JSONArray map = (JSONArray) jsonFile.get("map");
 			String name = (String) jsonFile.get("name");
-			boolean done = (boolean) jsonFile.get("done");
 			String uuid = (String) jsonFile.get("uuid");
+			String next_uuid = (String) jsonFile.get("next_uuid");
 			long ballSpeed = (long) jsonFile.get("ballSpeed");
 			long totBricks = (long) jsonFile.get("totBricks");
 
@@ -39,8 +36,8 @@ public class Level {
 			 * Save data from parsed JSON File
 			 * ############################## */
 			this.uuid = uuid;
+			this.next_uuid = next_uuid;
 			this.name = name;
-			this.done = done;
 			this.path = path;
 			this.totBricks = totBricks;
 			this.breakBricks = totBricks;
@@ -62,9 +59,6 @@ public class Level {
 		return name;
 	}
 
-	public boolean getDone() {
-		return done;
-	}
 
 	public String getPath() {
 		return path;
@@ -80,11 +74,6 @@ public class Level {
 
 	public int[][] getMap() {
 		return map;
-	}
-
-	public void setDone(boolean done) {
-		this.done = done;
-		saveToJSON();
 	}
 
 	public void removeBrick() {
@@ -112,22 +101,6 @@ public class Level {
 
 	@Override
 	public String toString() {
-		return name + " - " + (done ? "completato" : "non completato");
-	}
-
-	private void saveToJSON() {
-		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("uuid", uuid);
-		jsonObj.put("name", name);
-		jsonObj.put("totBricks", totBricks);
-		jsonObj.put("ballSpeed", ballSpeed);
-		jsonObj.put("map", mapJSON);
-		jsonObj.put("done", done);
-
-		try (FileWriter file = new FileWriter(path)) {
-			file.write(jsonObj.toJSONString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		return name;
 	}
 }

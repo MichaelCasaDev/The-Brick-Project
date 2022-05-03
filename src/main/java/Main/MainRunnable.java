@@ -2,8 +2,7 @@ package Main;
 
 import Control.Controller;
 import View.*;
-import View.Overlays.EndGameMenu;
-import View.Overlays.InGameMenu;
+import View.EndGameScreen;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -23,9 +22,7 @@ public class MainRunnable {
         GiocaPanel giocaPanel = new GiocaPanel();
         InformazioniPanel informazioniPanel = new InformazioniPanel();
         ComeSiGiocaPanel comeSiGiocaPanel = new ComeSiGiocaPanel();
-
-        EndGameMenu endGameMenu = new EndGameMenu();
-        InGameMenu inGameMenu = new InGameMenu();
+        EndGameScreen endGameScreen = new EndGameScreen();
 
         /* ##############################
          * Main Logic
@@ -44,7 +41,7 @@ public class MainRunnable {
         filesManager(); // Generate useful files if not present (levels, users, sounds, global)
 
         window.setPane(mainMenuPanel); // Default contentPane
-        new Controller(window, mainMenuPanel, impostazioniPanel, giocaPanel, informazioniPanel, comeSiGiocaPanel, endGameMenu, inGameMenu);
+        new Controller(window, mainMenuPanel, impostazioniPanel, giocaPanel, informazioniPanel, comeSiGiocaPanel, endGameScreen);
     }
 
     private static void filesManager() {

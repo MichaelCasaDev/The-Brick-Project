@@ -1,5 +1,6 @@
 {
   "uuid": "0",
+  "next_uuid": "01",
   "name": "sassi0",
   "ballSpeed": 8,
   "totBricks": 80,

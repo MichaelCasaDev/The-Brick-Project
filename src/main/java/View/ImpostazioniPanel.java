@@ -18,8 +18,6 @@ public class ImpostazioniPanel extends JPanel {
 	private JTextField textFieldUsername;
 	private JLabel lblNewLabel_3;
 	private JCheckBox chckbxSuoni;
-	private JLabel lblNewLabel_4;
-	private JTextField textFieldPathFiles;
 	private JButton btnTornaIndietro;
 	private JButton btnReset;
 	private JLabel lblNewLabel_2;
@@ -30,8 +28,8 @@ public class ImpostazioniPanel extends JPanel {
 	private JLabel lblTotBricksBreak;
 	private JLabel lblTotPlayGame;
 	private JLabel lblLevel;
-	private JButton btnSalvaPath;
 	private JButton btnAggiungi;
+	private JButton btnSalva;
 
 	/**
 	 * Create the panel.
@@ -57,7 +55,6 @@ public class ImpostazioniPanel extends JPanel {
 		add(lblUsername);
 
 		textFieldUsername = new JTextField();
-		textFieldUsername.setEnabled(false);
 		textFieldUsername.setBounds(441, 123, 130, 26);
 		add(textFieldUsername);
 		textFieldUsername.setColumns(10);
@@ -67,26 +64,15 @@ public class ImpostazioniPanel extends JPanel {
 		add(lblNewLabel_3);
 
 		chckbxSuoni = new JCheckBox("Disattivati");
-		chckbxSuoni.setEnabled(false);
 		chckbxSuoni.setBounds(441, 156, 128, 23);
 		add(chckbxSuoni);
-
-		lblNewLabel_4 = new JLabel("Path files");
-		lblNewLabel_4.setBounds(64, 249, 61, 16);
-		add(lblNewLabel_4);
-
-		textFieldPathFiles = new JTextField();
-		textFieldPathFiles.setBounds(138, 244, 130, 26);
-		add(textFieldPathFiles);
-		textFieldPathFiles.setColumns(10);
 
 		btnTornaIndietro = new JButton("<- Torna indietro");
 		btnTornaIndietro.setBounds(64, 675, 200, 29);
 		add(btnTornaIndietro);
 
-		btnReset = new JButton("Reset valori e statistiche");
-		btnReset.setEnabled(false);
-		btnReset.setBounds(367, 214, 204, 29);
+		btnReset = new JButton("Reset statistiche");
+		btnReset.setBounds(367, 244, 204, 29);
 		add(btnReset);
 
 		lblNewLabel_2 = new JLabel("Statistiche");
@@ -121,15 +107,14 @@ public class ImpostazioniPanel extends JPanel {
 		lblLevel = new JLabel("-");
 		lblLevel.setBounds(881, 219, 61, 16);
 		add(lblLevel);
-
-		btnSalvaPath = new JButton("Salva");
-		btnSalvaPath.setEnabled(false);
-		btnSalvaPath.setBounds(138, 282, 130, 29);
-		add(btnSalvaPath);
 		
 		btnAggiungi = new JButton("+");
 		btnAggiungi.setBounds(276, 155, 45, 29);
 		add(btnAggiungi);
+		
+		btnSalva = new JButton("Salva");
+		btnSalva.setBounds(367, 203, 204, 29);
+		add(btnSalva);
 
 	}
 
@@ -143,10 +128,6 @@ public class ImpostazioniPanel extends JPanel {
 
 	public JCheckBox getChckbxSuoni() {
 		return chckbxSuoni;
-	}
-
-	public JTextField getTextFieldPathFiles() {
-		return textFieldPathFiles;
 	}
 
 	public JButton getBtnTornaIndietro() {
@@ -169,11 +150,11 @@ public class ImpostazioniPanel extends JPanel {
 		return lblLevel;
 	}
 
-	public JButton getBtnSalvaPath() {
-		return btnSalvaPath;
-	}
-
 	public JButton getBtnAggiungi(){
 		return btnAggiungi;
+	}
+
+	public JButton getBtnSalva() {
+		return btnSalva;
 	}
 }

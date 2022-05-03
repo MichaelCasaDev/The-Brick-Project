@@ -18,18 +18,23 @@ import java.util.concurrent.TimeUnit;
 
 public class GamePlay extends JPanel implements ActionListener, KeyListener {
     // useful variables
-    private boolean play = false;
-    private boolean end = false;
-    private long score = 0;
-    private long startTime = 0;
-    final private Level level;
-    private GameplayEvents gameplayEvents;
+    private boolean play;
+    private boolean end;
 
-    // Timer
+    private long score;
+    private int delay;
+    private long startTime;
+    private String timeStr;
+
+    // some final variables
+    final private Level level;
     final private Timer timer;
 
+    // custom events (used to show the endgame menu from the controller)
+    private GameplayEvents gameplayEvents;
+
     // paddle
-    private int playerX = GlobalVars.frameWidth / 2 - 100;
+    private int paddle = GlobalVars.frameWidth / 2 - 100;
 
     // position of ball
     private int ballposX;
@@ -42,10 +47,14 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
      * ############################## */
 
     public GamePlay(Level level) {
+        this.play = false;
+        this.end = false;
+        this.score = 0;
+        this.startTime = -1;
         this.level = level;
-        level.reloadMap();
-        int delay = (int) level.getBallSpeed(); // <- it modifies the ball speed (aka the update time of each frame)
+        this.delay = (int) level.getBallSpeed(); // <- it modifies the ball speed (aka the update time of each frame)
 
+        level.reloadMap();
         generateBallPosition();
 
         setFocusable(true);
@@ -59,6 +68,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         timer.start();
     }
 
+    // The main graphics method (draw everything in the screen)
     public void paint(Graphics g) {
         // background
         g.setColor(GlobalVars.backgroundColor);
@@ -74,48 +84,47 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         g.fillRect(GlobalVars.frameWidth - 3, 0, 3, GlobalVars.frameHeight);
 
         // the score
-        g.setColor(Color.WHITE);
+        g.setColor(GlobalVars.scoreColor);
         g.setFont(new Font("serif", Font.BOLD, 25));
         g.drawString("" + score, GlobalVars.frameWidth - 32 - g.getFontMetrics().stringWidth("" + score), 32);
 
         // the paddle
         g.setColor(GlobalVars.paddleColor);
-        g.fillRect(playerX, GlobalVars.frameHeight - 8 - 64, 200, 8);
+        g.fillRect(paddle, GlobalVars.frameHeight - 8 - 64, 200, 8);
 
         // the ball
         g.setColor(GlobalVars.ballColor);
         g.fillOval(ballposX, ballposY, 20, 20);
 
         // init
-        if(!play) {
-            g.setColor(Color.CYAN);
+        if(!play && startTime == -1) {
+            g.setColor(GlobalVars.initialTextColor);
             g.setFont(new Font("serif", Font.BOLD, 20));
             g.drawString("Premi SPACE per iniziare a giocare!", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Premi SPACE per iniziare a giocare!") / 2, GlobalVars.frameHeight / 2);
 
             // the time (fixed)
-            g.setColor(Color.CYAN);
+            g.setColor(GlobalVars.timerColor);
             g.setFont(new Font("serif", Font.BOLD, 20));
             g.drawString("00:00", 32, 32);
         }
 
-        // the time (dynamic)
+        // the time (dynamic) ### NOT WORKING CORRECTLY ###
         if(play){
             long timeSeconds = TimeUnit.SECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
             long timeMinutes = TimeUnit.MINUTES.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
             long realTimeSeconds = (timeSeconds >= 60 ? (timeSeconds - (timeMinutes * 60)) : timeSeconds);
 
-            String str = (timeMinutes >= 10 ? timeMinutes : ("0" + timeMinutes)) + ":" + (realTimeSeconds >= 10 ? "" : "0") + realTimeSeconds;
+            timeStr = (timeMinutes >= 10 ? timeMinutes : ("0" + timeMinutes)) + ":" + (realTimeSeconds >= 10 ? "" : "0") + realTimeSeconds;
 
-            g.setColor(Color.CYAN);
+            g.setColor(GlobalVars.timerColor);
             g.setFont(new Font("serif", Font.BOLD, 20));
-            g.drawString(str, 32, 32);
+            g.drawString(timeStr, 32, 32);
         }
 
         // when you won the game
         if (level.getBreakBricks() <= 0) {
             play = false;
             end = true;
-            level.setDone(true);
 
             gameplayEvents.endMenuOpen(true);
         }
@@ -127,12 +136,16 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
             gameplayEvents.endMenuOpen(false);
         }
 
+        // inGame menu
+        if(!play && !end && startTime != -1) {
+            showInGameMenu(g);
+        }
+
         g.dispose();
     }
 
-    public void riprendi() {
-        play = true;
-        timer.start();
+    public String getTimeStr() {
+        return timeStr;
     }
 
     /* ##############################
@@ -147,16 +160,19 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
      * Private methods
      * ############################## */
 
+    // Move paddle to left
     private void moveLeft() {
         play = true;
-        playerX -= 15;
+        paddle -= 15;
     }
 
+    // Move paddle to right
     private void moveRight() {
         play = true;
-        playerX += 15;
+        paddle += 15;
     }
 
+    // Generate random ball position
     private void generateBallPosition() {
         ballposX = (int) (Math.random() * GlobalVars.playAreaWidth);
         ballposY = (int) (Math.random() * GlobalVars.playAreaHeight) + GlobalVars.brickHeight * GlobalVars.gameRows + 64;
@@ -166,11 +182,12 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         }
     }
 
+    // Play sounds
     private void playSound(String soundPath) {
         try {
             Clip clip = AudioSystem.getClip();
             AudioInputStream inputStream = AudioSystem
-                    .getAudioInputStream(new File(GlobalVars.dirBase + soundPath));
+                    .getAudioInputStream(new File(GlobalVars.dirBase + "sounds/" + soundPath));
             clip.open(inputStream);
             clip.start();
         } catch (Exception xe) {
@@ -178,6 +195,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         }
     }
 
+    // Draw the bricks map
     private void drawMap(Graphics2D g) {
         for (int i = 0; i < level.getMap().length; i++) {
             for (int j = 0; j < level.getMap()[0].length; j++) {
@@ -194,8 +212,31 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    private void setBrickValue(int row, int col) {
+    // Set the brick value to 0 => hide it
+    private void breakBrick(int row, int col) {
         level.getMap()[row][col] = 0;
+    }
+
+    // Show the in game menu (pause menu)
+    private void showInGameMenu(Graphics g) {
+        // the background
+        g.setColor(new Color(0,0,0, 128));
+        g.fillRect(1, 1, GlobalVars.frameWidth, GlobalVars.frameHeight);
+
+        // the title
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("serif", Font.BOLD, 25));
+        g.drawString("Pausa", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Pausa")/2, 128);
+
+        // the text #1
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("serif", Font.BOLD, 18));
+        g.drawString("Premi ESC per continuare a giocare", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Premi ESC per continuare a giocare")/2, 256);
+
+        // the text #2
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("serif", Font.BOLD, 18));
+        g.drawString("Premi SPACE per ricominciare la partita", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Premi SPACE per ricominciare la partita")/2, 288);
     }
 
     /* ##############################
@@ -203,16 +244,16 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
      * ############################## */
 
     @Override
-    public void keyTyped(KeyEvent e) {
-    }
+    public void keyTyped(KeyEvent e) {}
 
     @Override
-    public void keyReleased(KeyEvent e) {
-    }
+    public void keyReleased(KeyEvent e) {}
 
+    // Listen to pressed keys
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_SPACE && !play && startTime == 0) {
+        // to start the game
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && !play && startTime == -1) {
             play = true;
 
             startTime = System.nanoTime();
@@ -220,9 +261,10 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
             return;
         }
 
+        // move right paddle
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && play) {
-            if (playerX >= GlobalVars.frameWidth - 200) {
-                playerX = GlobalVars.frameWidth - 210;
+            if (paddle >= GlobalVars.frameWidth - 200) {
+                paddle = GlobalVars.frameWidth - 210;
             } else {
                 moveRight();
             }
@@ -230,9 +272,10 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
             return;
         }
 
+        // move left paddle
         if (e.getKeyCode() == KeyEvent.VK_LEFT && play) {
-            if (playerX < 10) {
-                playerX = 10;
+            if (paddle < 10) {
+                paddle = 10;
             } else {
                 moveLeft();
             }
@@ -240,82 +283,100 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
             return;
         }
 
-        // In game open menu
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && play && !end && startTime != 0) {
+        // In game menu open
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && play && !end && startTime != -1) {
             play = false;
-            timer.stop();
-            gameplayEvents.inGameMenuOpen();
+
+            return;
+        }
+
+        // In game menu close
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && !play && !end && startTime != -1) {
+            play = true;
+
+            return;
+        }
+
+        // In game menu close & restart
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && !play && !end && startTime != -1) {
+            this.play = false;
+            this.end = false;
+            this.score = 0;
+            this.startTime = -1;
+            this.delay = (int) level.getBallSpeed(); // <- it modifies the ball speed (aka the update time of each frame)
+
+            level.reloadMap();
+            generateBallPosition();
 
             return;
         }
     }
 
+    // Run automatically thanks to the Timer
     @Override
     public void actionPerformed(ActionEvent e) {
         timer.start();
 
-        if (!play) {
-            return;
-        }
+        if (play) {
+            // check ball collision with the paddle
+            if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(paddle, GlobalVars.frameHeight - 8 - 64, 200, 8))
+                    && ballYdir > 0) {
+                ballYdir = -ballYdir;
 
-        // check ball collision with the paddle
-        if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(playerX, GlobalVars.frameHeight - 8 - 64, 200, 8))
-                && ballYdir > 0) {
-            ballYdir = -ballYdir;
+                playSound("hit_paddle.wav");
+            }
 
-            playSound("sounds/hit_paddle.wav");
-        }
+            // check map collision with the ball
+            for (int i = 0; i < level.getMap().length; i++) {
+                for (int j = 0; j < level.getMap()[0].length; j++) {
+                    if (level.getMap()[i][j] != 0) {
+                        int brickX = j * GlobalVars.brickWidth + 80;
+                        int brickY = i * GlobalVars.brickHeight + 50;
 
-        // check map collision with the ball
-        for (int i = 0; i < level.getMap().length; i++) {
-            for (int j = 0; j < level.getMap()[0].length; j++) {
-                if (level.getMap()[i][j] != 0) {
-                    int brickX = j * GlobalVars.brickWidth + 80;
-                    int brickY = i * GlobalVars.brickHeight + 50;
+                        Rectangle brickRect = new Rectangle(brickX, brickY, GlobalVars.brickWidth, GlobalVars.brickHeight);
+                        Rectangle ballRect = new Rectangle(ballposX, ballposY, 20, 20);
 
-                    Rectangle brickRect = new Rectangle(brickX, brickY, GlobalVars.brickWidth, GlobalVars.brickHeight);
-                    Rectangle ballRect = new Rectangle(ballposX, ballposY, 20, 20);
+                        if (ballRect.intersects(brickRect)) {
+                            breakBrick(i, j);
+                            score += 5;
+                            level.removeBrick();
 
-                    if (ballRect.intersects(brickRect)) {
-                        setBrickValue(i, j);
-                        score += 5;
-                        level.removeBrick();
+                            playSound("hit.wav");
 
-                        playSound("sounds/hit.wav");
-
-                        // when ball hit right or left of brick
-                        if (ballposX + 19 <= brickRect.x || ballposX + 1 >= brickRect.x + brickRect.width) {
-                            ballXdir = -ballXdir;
-                        } else { // when ball hits top or bottom of brick
-                            ballYdir = -ballYdir;
+                            // when ball hit right or left of brick
+                            if (ballposX + 19 <= brickRect.x || ballposX + 1 >= brickRect.x + brickRect.width) {
+                                ballXdir = -ballXdir;
+                            } else { // when ball hits top or bottom of brick
+                                ballYdir = -ballYdir;
+                            }
                         }
                     }
                 }
             }
-        }
 
-        ballposX += ballXdir;
-        ballposY += ballYdir;
+            ballposX += ballXdir;
+            ballposY += ballYdir;
 
-        // check ball collision with border left
-        if (ballposX < 0) {
-            ballXdir = -ballXdir;
+            // check ball collision with border left
+            if (ballposX < 0) {
+                ballXdir = -ballXdir;
 
-            playSound("sounds/hit_wall.wav");
-        }
+                playSound("hit_wall.wav");
+            }
 
-        // check ball collision with border top
-        if (ballposY < 0) {
-            ballYdir = -ballYdir;
+            // check ball collision with border top
+            if (ballposY < 0) {
+                ballYdir = -ballYdir;
 
-            playSound("sounds/hit_wall.wav");
-        }
+                playSound("hit_wall.wav");
+            }
 
-        // check ball collision with border right
-        if (ballposX > GlobalVars.frameWidth - 3 - 20) {
-            ballXdir = -ballXdir;
+            // check ball collision with border right
+            if (ballposX > GlobalVars.frameWidth - 3 - 20) {
+                ballXdir = -ballXdir;
 
-            playSound("sounds/hit_wall.wav");
+                playSound("hit_wall.wav");
+            }
         }
 
         repaint();

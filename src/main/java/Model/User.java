@@ -1,29 +1,28 @@
 package Model;
 
 import Main.GlobalVars;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class User {
 	private String uuid;
 	private String username;
+	private boolean sounds;
 	private long totBricksBreak;
 	private long totPlayGame;
-	private ArrayList<String> level;
+	private String level;
 
 	public User() {
 		this.uuid = UUID.randomUUID().toString(); // Generate random UUID for new user
 		this.username = "Player0";
 		this.totBricksBreak = 0;
 		this.totPlayGame = 0;
-		this.level = new ArrayList<>();
+		this.level = "";
 
 		saveToJSON();
 	}
@@ -37,21 +36,20 @@ public class User {
 			JSONObject jsonFile = (JSONObject) parser.parse(file);
 			String uuid = (String) jsonFile.get("uuid");
 			String username = (String) jsonFile.get("username");
+			boolean sounds = (boolean) jsonFile.get("sounds");
 			long totBricksBreak = (long) jsonFile.get("totBricksBreak");
 			long totPlayGame = (long) jsonFile.get("totPlayGame");
-			JSONArray level = (JSONArray) jsonFile.get("level");
+			String level = (String) jsonFile.get("level");
 
 			/* ##############################
 			 * Save data from parsed JSON File
 			 * ############################## */
 			this.uuid = uuid;
 			this.username = username;
+			this.sounds = sounds;
 			this.totBricksBreak = totBricksBreak;
 			this.totPlayGame = totPlayGame;
-
-			for(Object l : level) {
-				level.add(l.toString());
-			}
+			this.level = level;
 
 
 		} catch(Exception e) {
@@ -71,7 +69,7 @@ public class User {
 		return totPlayGame;
 	}
 
-	public ArrayList<String> getLevel() {
+	public String getLevel() {
 		return level;
 	}
 
@@ -90,22 +88,39 @@ public class User {
 		saveToJSON();
 	}
 
-	public void setLevel(ArrayList<String> level) {
+	public void setLevel(String level) {
 		this.level = level;
 		saveToJSON();
 	}
 
-	private void saveToJSON() {
-		JSONArray levelObj = new JSONArray();
-		levelObj.addAll(level);
+	public void setSounds(boolean sounds) {
+		this.sounds = sounds;
+		saveToJSON();
+	}
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public boolean getSounds() {
+		return sounds;
+	}
+
+	@Override
+	public String toString() {
+		return username;
+	}
+
+	private void saveToJSON() {
 		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("uuid", uuid);
 		jsonObj.put("username", username);
+		jsonObj.put("sounds", sounds);
 		jsonObj.put("totBricksBreak", totBricksBreak);
 		jsonObj.put("totPlayGame", totPlayGame);
-		jsonObj.put("level", levelObj);
+		jsonObj.put("level", level);
 
-		try (FileWriter file = new FileWriter(GlobalVars.dirBase + "players/" + uuid + ".json")) {
+		try (FileWriter file = new FileWriter(GlobalVars.dirBase + "users/" + uuid + ".json")) {
 			file.write(jsonObj.toJSONString());
 		} catch (IOException e) {
 			e.printStackTrace();

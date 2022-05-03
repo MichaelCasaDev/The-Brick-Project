@@ -22,8 +22,14 @@ public class UserManager {
         users.remove(index);
     }
 
-    public User get(int index) {
-        return users.get(index);
+    public User get(String uuid) {
+        User user = null;
+        for(User u : users) {
+            if(u.getUuid().equals(uuid)) {
+                user = u;
+            }
+        }
+        return user;
     }
 
     public void update(User p, int index) {
