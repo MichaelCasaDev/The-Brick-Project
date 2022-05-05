@@ -19,10 +19,11 @@ public class User {
 
 	public User() {
 		this.uuid = UUID.randomUUID().toString(); // Generate random UUID for new user
-		this.username = "Player0";
+		this.username = "Player";
+		this.sounds = true;
 		this.totBricksBreak = 0;
 		this.totPlayGame = 0;
-		this.level = "";
+		this.level = "9b9fd586-652c-42fa-bc8b-6bbaa2a39222";
 
 		saveToJSON();
 	}
@@ -78,12 +79,12 @@ public class User {
 		saveToJSON();
 	}
 
-	public void setTotBricksBreak(int totBricksBreak) {
+	public void setTotBricksBreak(long totBricksBreak) {
 		this.totBricksBreak = totBricksBreak;
 		saveToJSON();
 	}
 
-	public void setTotPlayGame(int totPlayGame) {
+	public void setTotPlayGame(long totPlayGame) {
 		this.totPlayGame = totPlayGame;
 		saveToJSON();
 	}

@@ -19,14 +19,14 @@ public class LevelManager {
         levels.add(l);
     }
 
-    public ArrayList<Level> getList() {
-        return levels;
-    }
-
     public DefaultListModel<Level> getListModel() {
         DefaultListModel<Level> model = new DefaultListModel<>();
         model.addAll(levels);
         return model;
+    }
+
+    public Level parser(String uuid) {
+        return new Level(GlobalVars.dirBase + "levels/" + uuid + ".json");
     }
 
     public void loadData() {

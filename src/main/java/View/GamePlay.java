@@ -2,7 +2,9 @@ package View;
 
 import Main.GameplayEvents;
 import Main.GlobalVars;
+import Model.GameTimeThread;
 import Model.Level;
+import Model.User;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -14,7 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Semaphore;
 
 public class GamePlay extends JPanel implements ActionListener, KeyListener {
     // useful variables
@@ -22,13 +24,16 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
     private boolean end;
 
     private long score;
+    private long time;
     private int delay;
-    private long startTime;
     private String timeStr;
 
     // some final variables
     final private Level level;
+    final private User user;
     final private Timer timer;
+    final private GameTimeThread gameTimeThread;
+    final private Semaphore semaphore;
 
     // custom events (used to show the endgame menu from the controller)
     private GameplayEvents gameplayEvents;
@@ -42,17 +47,21 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
     private int ballXdir = -1;
     private int ballYdir = -2;
 
-    /* ##############################
-     * Game logic form here!
-     * ############################## */
+    /* -------------------------------------------------------------------------------------------------------- */
+     // Game logic form here!
+    /* -------------------------------------------------------------------------------------------------------- */
 
-    public GamePlay(Level level) {
+    public GamePlay(Level level, User user) {
         this.play = false;
         this.end = false;
         this.score = 0;
-        this.startTime = -1;
+        this.time = 0;
         this.level = level;
+        this.user = user;
         this.delay = (int) level.getBallSpeed(); // <- it modifies the ball speed (aka the update time of each frame)
+
+        this.semaphore = new Semaphore(1);
+        this.gameTimeThread = new GameTimeThread(this, semaphore);
 
         level.reloadMap();
         generateBallPosition();
@@ -68,7 +77,9 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         timer.start();
     }
 
+    /* -------------------------------------------------------------------------------------------------------- */
     // The main graphics method (draw everything in the screen)
+    /* -------------------------------------------------------------------------------------------------------- */
     public void paint(Graphics g) {
         // background
         g.setColor(GlobalVars.backgroundColor);
@@ -97,7 +108,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         g.fillOval(ballposX, ballposY, 20, 20);
 
         // init
-        if(!play && startTime == -1) {
+        if(!play && time == 0) {
             g.setColor(GlobalVars.initialTextColor);
             g.setFont(new Font("serif", Font.BOLD, 20));
             g.drawString("Premi SPACE per iniziare a giocare!", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Premi SPACE per iniziare a giocare!") / 2, GlobalVars.frameHeight / 2);
@@ -110,11 +121,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
 
         // the time (dynamic) ### NOT WORKING CORRECTLY ###
         if(play){
-            long timeSeconds = TimeUnit.SECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
-            long timeMinutes = TimeUnit.MINUTES.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
-            long realTimeSeconds = (timeSeconds >= 60 ? (timeSeconds - (timeMinutes * 60)) : timeSeconds);
-
-            timeStr = (timeMinutes >= 10 ? timeMinutes : ("0" + timeMinutes)) + ":" + (realTimeSeconds >= 10 ? "" : "0") + realTimeSeconds;
+            timeStr = GlobalVars.timeParser(time);
 
             g.setColor(GlobalVars.timerColor);
             g.setFont(new Font("serif", Font.BOLD, 20));
@@ -127,6 +134,9 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
             end = true;
 
             gameplayEvents.endMenuOpen(true);
+            user.setTotPlayGame(user.getTotPlayGame() + 1);
+            user.setTotBricksBreak(user.getTotBricksBreak() + score/5);
+            user.setLevel(level.getNext_uuid());
         }
 
         // when you lose the game
@@ -134,31 +144,44 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
             play = false;
             end = true;
             gameplayEvents.endMenuOpen(false);
+
+            user.setTotPlayGame(user.getTotPlayGame() + 1);
+            user.setTotBricksBreak(user.getTotBricksBreak() + score/5);
         }
 
         // inGame menu
-        if(!play && !end && startTime != -1) {
+        if(!play && !end && time != 0) {
             showInGameMenu(g);
         }
 
         g.dispose();
+
+
     }
 
     public String getTimeStr() {
         return timeStr;
     }
 
-    /* ##############################
-     * Gameplay listener
-     * ############################## */
+    public long getTime() {
+        return time;
+    }
+
+    public void addTime() {
+        time++;
+    }
+
+    /* -------------------------------------------------------------------------------------------------------- */
+    // Gameplay listener
+    /* -------------------------------------------------------------------------------------------------------- */
 
     public void addGameplayListener(GameplayEvents gameplayEvents) {
         this.gameplayEvents = gameplayEvents;
     }
 
-    /* ##############################
-     * Private methods
-     * ############################## */
+    /* -------------------------------------------------------------------------------------------------------- */
+     // Private methods
+    /* -------------------------------------------------------------------------------------------------------- */
 
     // Move paddle to left
     private void moveLeft() {
@@ -184,6 +207,10 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
 
     // Play sounds
     private void playSound(String soundPath) {
+        if(!user.getSounds()) {
+            return;
+        }
+
         try {
             Clip clip = AudioSystem.getClip();
             AudioInputStream inputStream = AudioSystem
@@ -220,7 +247,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
     // Show the in game menu (pause menu)
     private void showInGameMenu(Graphics g) {
         // the background
-        g.setColor(new Color(0,0,0, 128));
+        g.setColor(GlobalVars.backgroundColorTransparent);
         g.fillRect(1, 1, GlobalVars.frameWidth, GlobalVars.frameHeight);
 
         // the title
@@ -237,11 +264,16 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         g.setColor(Color.WHITE);
         g.setFont(new Font("serif", Font.BOLD, 18));
         g.drawString("Premi SPACE per ricominciare la partita", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Premi SPACE per ricominciare la partita")/2, 288);
+
+        // the text #3
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("serif", Font.BOLD, 18));
+        g.drawString("Premi ENTER per chiudere la partita", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Premi ENTER per chiudere la partita")/2, 352);
     }
 
-    /* ##############################
-     * Override methods for keyListener and Timer
-     * ############################## */
+    /* -------------------------------------------------------------------------------------------------------- */
+     // Override methods for keyListener and Timer
+    /* -------------------------------------------------------------------------------------------------------- */
 
     @Override
     public void keyTyped(KeyEvent e) {}
@@ -253,16 +285,15 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         // to start the game
-        if (e.getKeyCode() == KeyEvent.VK_SPACE && !play && startTime == -1) {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && !play && time == 0) {
             play = true;
-
-            startTime = System.nanoTime();
+            gameTimeThread.start();
 
             return;
         }
 
         // move right paddle
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT && play) {
+        if ((e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) && play) {
             if (paddle >= GlobalVars.frameWidth - 200) {
                 paddle = GlobalVars.frameWidth - 210;
             } else {
@@ -273,7 +304,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         }
 
         // move left paddle
-        if (e.getKeyCode() == KeyEvent.VK_LEFT && play) {
+        if ((e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) && play) {
             if (paddle < 10) {
                 paddle = 10;
             } else {
@@ -284,25 +315,43 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         }
 
         // In game menu open
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && play && !end && startTime != -1) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && play && !end && time != 0) {
             play = false;
+            try {
+                semaphore.acquire();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
 
             return;
         }
 
         // In game menu close
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && !play && !end && startTime != -1) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && !play && !end && time != 0) {
             play = true;
+            try {
+                semaphore.release();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            return;
+        }
+
+        // In game menu close & main menu
+        if (e.getKeyCode() == KeyEvent.VK_ENTER && !play && !end && time != 0) {
+            gameplayEvents.inGameMenuClose();
 
             return;
         }
 
         // In game menu close & restart
-        if (e.getKeyCode() == KeyEvent.VK_SPACE && !play && !end && startTime != -1) {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && !play && !end && time != 0) {
             this.play = false;
             this.end = false;
             this.score = 0;
-            this.startTime = -1;
+            this.time = 0;
+            this.paddle = GlobalVars.frameWidth / 2 - 100;
             this.delay = (int) level.getBallSpeed(); // <- it modifies the ball speed (aka the update time of each frame)
 
             level.reloadMap();
@@ -312,72 +361,78 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         }
     }
 
+    /* -------------------------------------------------------------------------------------------------------- */
+
     // Run automatically thanks to the Timer
     @Override
     public void actionPerformed(ActionEvent e) {
         timer.start();
 
-        if (play) {
-            // check ball collision with the paddle
-            if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(paddle, GlobalVars.frameHeight - 8 - 64, 200, 8))
-                    && ballYdir > 0) {
-                ballYdir = -ballYdir;
+        if (!play) {
+            repaint();
+            return;
+        }
 
-                playSound("hit_paddle.wav");
-            }
+        // check ball collision with the paddle
+        if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(paddle, GlobalVars.frameHeight - 8 - 64, 200, 8))
+                && ballYdir > 0) {
+            ballYdir = -ballYdir;
 
-            // check map collision with the ball
-            for (int i = 0; i < level.getMap().length; i++) {
-                for (int j = 0; j < level.getMap()[0].length; j++) {
-                    if (level.getMap()[i][j] != 0) {
-                        int brickX = j * GlobalVars.brickWidth + 80;
-                        int brickY = i * GlobalVars.brickHeight + 50;
+            playSound("hit_paddle.wav");
+        }
 
-                        Rectangle brickRect = new Rectangle(brickX, brickY, GlobalVars.brickWidth, GlobalVars.brickHeight);
-                        Rectangle ballRect = new Rectangle(ballposX, ballposY, 20, 20);
+        // check map collision with the ball
+        for (int i = 0; i < level.getMap().length; i++) {
+            for (int j = 0; j < level.getMap()[0].length; j++) {
+                if (level.getMap()[i][j] != 0) {
+                    int brickX = j * GlobalVars.brickWidth + 80;
+                    int brickY = i * GlobalVars.brickHeight + 50;
 
-                        if (ballRect.intersects(brickRect)) {
-                            breakBrick(i, j);
-                            score += 5;
-                            level.removeBrick();
+                    Rectangle brickRect = new Rectangle(brickX, brickY, GlobalVars.brickWidth, GlobalVars.brickHeight);
+                    Rectangle ballRect = new Rectangle(ballposX, ballposY, 20, 20);
 
-                            playSound("hit.wav");
+                    if (ballRect.intersects(brickRect)) {
+                        breakBrick(i, j);
+                        score += 5;
+                        level.removeBrick();
 
-                            // when ball hit right or left of brick
-                            if (ballposX + 19 <= brickRect.x || ballposX + 1 >= brickRect.x + brickRect.width) {
-                                ballXdir = -ballXdir;
-                            } else { // when ball hits top or bottom of brick
-                                ballYdir = -ballYdir;
-                            }
+                        playSound("hit.wav");
+
+                        // when ball hit right or left of brick
+                        if (ballposX + 19 <= brickRect.x || ballposX + 1 >= brickRect.x + brickRect.width) {
+                            ballXdir = -ballXdir;
+                        } else { // when ball hits top or bottom of brick
+                            ballYdir = -ballYdir;
                         }
                     }
                 }
             }
-
-            ballposX += ballXdir;
-            ballposY += ballYdir;
-
-            // check ball collision with border left
-            if (ballposX < 0) {
-                ballXdir = -ballXdir;
-
-                playSound("hit_wall.wav");
-            }
-
-            // check ball collision with border top
-            if (ballposY < 0) {
-                ballYdir = -ballYdir;
-
-                playSound("hit_wall.wav");
-            }
-
-            // check ball collision with border right
-            if (ballposX > GlobalVars.frameWidth - 3 - 20) {
-                ballXdir = -ballXdir;
-
-                playSound("hit_wall.wav");
-            }
         }
+
+        ballposX += ballXdir;
+        ballposY += ballYdir;
+
+        // check ball collision with border left
+        if (ballposX < 0) {
+            ballXdir = -ballXdir;
+
+            playSound("hit_wall.wav");
+        }
+
+        // check ball collision with border top
+        if (ballposY < 0) {
+            ballYdir = -ballYdir;
+
+            playSound("hit_wall.wav");
+        }
+
+        // check ball collision with border right
+        if (ballposX > GlobalVars.frameWidth - 3 - 20) {
+            ballXdir = -ballXdir;
+
+            playSound("hit_wall.wav");
+        }
+
 
         repaint();
     }

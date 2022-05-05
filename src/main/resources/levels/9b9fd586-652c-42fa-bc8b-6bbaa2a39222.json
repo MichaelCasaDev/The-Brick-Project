@@ -1,10 +1,10 @@
 {
-  "uuid": "0",
-  "next_uuid": "01",
-  "name": "sassi0",
+  "uuid": "9b9fd586-652c-42fa-bc8b-6bbaa2a39222",
+  "next_uuid": "0",
+  "name": "Level 0",
   "ballSpeed": 8,
-  "totBricks": 80,
-  "done": false,
+  "totBricks": 120,
+  "bestTime": 0,
   "map": [
     1,
     1,

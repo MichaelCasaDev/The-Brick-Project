@@ -30,6 +30,7 @@ public class ImpostazioniPanel extends JPanel {
 	private JLabel lblLevel;
 	private JButton btnAggiungi;
 	private JButton btnSalva;
+	private JButton btnRimuovi;
 
 	/**
 	 * Create the panel.
@@ -63,7 +64,7 @@ public class ImpostazioniPanel extends JPanel {
 		lblNewLabel_3.setBounds(367, 160, 61, 16);
 		add(lblNewLabel_3);
 
-		chckbxSuoni = new JCheckBox("Disattivati");
+		chckbxSuoni = new JCheckBox("Attivati");
 		chckbxSuoni.setBounds(441, 156, 128, 23);
 		add(chckbxSuoni);
 
@@ -107,14 +108,18 @@ public class ImpostazioniPanel extends JPanel {
 		lblLevel = new JLabel("-");
 		lblLevel.setBounds(881, 219, 61, 16);
 		add(lblLevel);
-		
+
 		btnAggiungi = new JButton("+");
 		btnAggiungi.setBounds(276, 155, 45, 29);
 		add(btnAggiungi);
-		
+
 		btnSalva = new JButton("Salva");
 		btnSalva.setBounds(367, 203, 204, 29);
 		add(btnSalva);
+
+		btnRimuovi = new JButton("-");
+		btnRimuovi.setBounds(276, 186, 45, 29);
+		add(btnRimuovi);
 
 	}
 
@@ -152,6 +157,10 @@ public class ImpostazioniPanel extends JPanel {
 
 	public JButton getBtnAggiungi(){
 		return btnAggiungi;
+	}
+
+	public JButton getBtnRimuovi(){
+		return btnRimuovi;
 	}
 
 	public JButton getBtnSalva() {

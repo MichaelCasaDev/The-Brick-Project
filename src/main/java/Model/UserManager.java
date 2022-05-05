@@ -18,8 +18,10 @@ public class UserManager {
         users.add(p);
     }
 
-    public void remove(int index) {
-        users.remove(index);
+    public void remove(User user) {
+        new File(GlobalVars.dirBase + "users/" + user.getUuid() + ".json").delete();
+
+        users.remove(user);
     }
 
     public User get(String uuid) {
@@ -32,10 +34,6 @@ public class UserManager {
         return user;
     }
 
-    public void update(User p, int index) {
-        users.set(index, p);
-    }
-
     public ArrayList<User> getList() {
         return users;
     }
@@ -43,6 +41,7 @@ public class UserManager {
     public void loadData() {
         final String dirUsers = GlobalVars.dirBase + "users";
         File folder = new File(dirUsers);
+
         for(File file : folder.listFiles()) {
             add(new User(file.getPath()));
         }

@@ -1,6 +1,7 @@
 package Main;
 
 import java.awt.*;
+import java.util.concurrent.TimeUnit;
 
 public class GlobalVars {
     public static final String dirBase = System.getProperty("user.dir") + "/theBrickData/";
@@ -16,12 +17,21 @@ public class GlobalVars {
 
     public static final int gameRows = 6;
     public static final int gameCols = 20;
-    public static final Color backgroundColor = new Color(0, 0, 0);
+    public static final Color backgroundColor = new Color(21, 21, 21);
+    public static final Color backgroundColorTransparent = new Color(0,0,0, 128);
     public static final Color brickColor = new Color(255, 101, 69);
     public static final Color borderColor = new Color(255, 255, 255);
-    public static final Color paddleColor = new Color(128, 255, 210);
-    public static final Color ballColor = new Color(108, 110, 234);
+    public static final Color paddleColor = new Color(255, 255, 255);
+    public static final Color ballColor = new Color(255, 255, 255);
     public static final Color scoreColor = new Color(255, 255, 255);
     public static final Color timerColor = new Color(255, 255, 255);
     public static final Color initialTextColor = new Color(255, 255, 255);
+
+    public static String timeParser(long time) {
+        long timeSeconds = TimeUnit.SECONDS.convert(time, TimeUnit.SECONDS);
+        long timeMinutes = TimeUnit.MINUTES.convert(time, TimeUnit.SECONDS);
+        long realTimeSeconds = (timeSeconds >= 60 ? (timeSeconds - (timeMinutes * 60)) : timeSeconds);
+
+        return (timeMinutes >= 10 ? timeMinutes : ("0" + timeMinutes)) + ":" + (realTimeSeconds >= 10 ? "" : "0") + realTimeSeconds;
+    }
 }

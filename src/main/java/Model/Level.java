@@ -6,6 +6,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Level {
 	private String uuid;
@@ -15,6 +17,7 @@ public class Level {
 	private long totBricks;
 	private long breakBricks;
 	private long ballSpeed;
+	private long bestTime;
 	private int[][] map;
 	private JSONArray mapJSON;
 
@@ -31,6 +34,7 @@ public class Level {
 			String next_uuid = (String) jsonFile.get("next_uuid");
 			long ballSpeed = (long) jsonFile.get("ballSpeed");
 			long totBricks = (long) jsonFile.get("totBricks");
+			long bestTime = (long) jsonFile.get("bestTime");
 
 			/* ##############################
 			 * Save data from parsed JSON File
@@ -42,6 +46,7 @@ public class Level {
 			this.totBricks = totBricks;
 			this.breakBricks = totBricks;
 			this.ballSpeed = ballSpeed;
+			this.bestTime = bestTime;
 			this.map = new int[GlobalVars.gameRows][GlobalVars.gameCols];
 			this.mapJSON = map;
 
@@ -55,10 +60,13 @@ public class Level {
 		return uuid;
 	}
 
+	public String getNext_uuid() {
+		return next_uuid;
+	}
+
 	public String getName() {
 		return name;
 	}
-
 
 	public String getPath() {
 		return path;
@@ -84,6 +92,16 @@ public class Level {
 		return breakBricks;
 	}
 
+	public long getBestTime() {
+		return bestTime;
+	}
+
+	public void setBestTime(long bestTime) {
+		this.bestTime = bestTime;
+
+		saveToJSON();
+	}
+
 	public void reloadMap() {
 		/* ##############################
 		 * Generate map from JSON Array
@@ -96,6 +114,23 @@ public class Level {
 
 				this.map[i][j] = block;
 			}
+		}
+	}
+
+	private void saveToJSON() {
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("uuid", uuid);
+		jsonObj.put("name", name);
+		jsonObj.put("map", mapJSON);
+		jsonObj.put("next_uuid", next_uuid);
+		jsonObj.put("ballSpeed", ballSpeed);
+		jsonObj.put("totBricks", totBricks);
+		jsonObj.put("bestTime", bestTime);
+
+		try (FileWriter file = new FileWriter(GlobalVars.dirBase + "levels/" + uuid + ".json")) {
+			file.write(jsonObj.toJSONString());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
