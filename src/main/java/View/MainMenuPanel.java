@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 
 public class MainMenuPanel extends JPanel {
 	private JLabel lblNewLabel;
@@ -24,12 +25,13 @@ public class MainMenuPanel extends JPanel {
 	 * Create the panel.
 	 */
 	public MainMenuPanel() {
-		setForeground(Color.WHITE);
+		setBackground(GlobalVars.backgroundColor);
 		setSize(GlobalVars.frameWidth, GlobalVars.frameHeight);
 		setLayout(null);
 		
 		lblNewLabel = new JLabel("The Brick");
 		lblNewLabel.setFont(new Font("Herculanum", Font.PLAIN, 38));
+		lblNewLabel.setForeground(GlobalVars.textColor);
 		lblNewLabel.setBounds(64, 64, 208, 48);
 		add(lblNewLabel);
 		
@@ -51,6 +53,7 @@ public class MainMenuPanel extends JPanel {
 		add(btnGioca);
 		
 		lblNewLabel_1 = new JLabel("Made by Casagrande Michael, Verri Riccardo & Zago Leonardo");
+		lblNewLabel_1.setForeground(GlobalVars.textColor);
 		lblNewLabel_1.setBounds(916, 688, 386, 16);
 		add(lblNewLabel_1);
 		
@@ -61,6 +64,7 @@ public class MainMenuPanel extends JPanel {
 		add(lblNewLabel_2);
 		
 		lblUsername = new JLabel("Logged in as: [username]");
+		lblUsername.setForeground(GlobalVars.textColor);
 		lblUsername.setBounds(64, 124, 208, 16);
 		add(lblUsername);
 		

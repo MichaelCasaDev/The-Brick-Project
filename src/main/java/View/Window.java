@@ -21,6 +21,8 @@ public class Window extends JFrame {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(windowAdapter);
 
+		setBackground(GlobalVars.backgroundColorAlt);
+
 		setBounds(0, 0, GlobalVars.frameWidth, GlobalVars.frameHeight);
 		setLocationRelativeTo(null);
 		setResizable(false);

@@ -1,5 +1,7 @@
 package View;
 
+import Main.GlobalVars;
+
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -36,9 +38,11 @@ public class ImpostazioniPanel extends JPanel {
 	 * Create the panel.
 	 */
 	public ImpostazioniPanel() {
+		setBackground(GlobalVars.backgroundColor);
 		setLayout(null);
 
 		lblNewLabel = new JLabel("Impostazioni");
+		lblNewLabel.setForeground(GlobalVars.textColor);
 		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 24));
 		lblNewLabel.setBounds(607, 64, 151, 30);
 		add(lblNewLabel);
@@ -48,10 +52,12 @@ public class ImpostazioniPanel extends JPanel {
 		add(comboBoxUtenti);
 
 		lblNewLabel_1 = new JLabel("Seleziona un utente");
+		lblNewLabel_1.setForeground(GlobalVars.textColor);
 		lblNewLabel_1.setBounds(64, 128, 130, 16);
 		add(lblNewLabel_1);
 
 		lblUsername = new JLabel("Username");
+		lblUsername.setForeground(GlobalVars.textColor);
 		lblUsername.setBounds(367, 128, 62, 16);
 		add(lblUsername);
 
@@ -61,10 +67,12 @@ public class ImpostazioniPanel extends JPanel {
 		textFieldUsername.setColumns(10);
 
 		lblNewLabel_3 = new JLabel("Suoni");
+		lblNewLabel_3.setForeground(GlobalVars.textColor);
 		lblNewLabel_3.setBounds(367, 160, 61, 16);
 		add(lblNewLabel_3);
 
 		chckbxSuoni = new JCheckBox("Attivati");
+		chckbxSuoni.setForeground(GlobalVars.textColor);
 		chckbxSuoni.setBounds(441, 156, 128, 23);
 		add(chckbxSuoni);
 
@@ -77,18 +85,22 @@ public class ImpostazioniPanel extends JPanel {
 		add(btnReset);
 
 		lblNewLabel_2 = new JLabel("Statistiche");
+		lblNewLabel_2.setForeground(GlobalVars.textColor);
 		lblNewLabel_2.setBounds(711, 128, 66, 16);
 		add(lblNewLabel_2);
 
 		lblNewLabel_5 = new JLabel("Totale blocchi rotti");
+		lblNewLabel_5.setForeground(GlobalVars.textColor);
 		lblNewLabel_5.setBounds(711, 160, 120, 16);
 		add(lblNewLabel_5);
 
 		lblNewLabel_6 = new JLabel("Totale partite giocate");
+		lblNewLabel_6.setForeground(GlobalVars.textColor);
 		lblNewLabel_6.setBounds(711, 191, 134, 16);
 		add(lblNewLabel_6);
 
 		lblNewLabel_7 = new JLabel("Livello attuale");
+		lblNewLabel_7.setForeground(GlobalVars.textColor);
 		lblNewLabel_7.setBounds(711, 219, 88, 16);
 		add(lblNewLabel_7);
 
@@ -98,14 +110,17 @@ public class ImpostazioniPanel extends JPanel {
 		add(separator);
 
 		lblTotBricksBreak = new JLabel("-");
+		lblTotBricksBreak.setForeground(GlobalVars.textColor);
 		lblTotBricksBreak.setBounds(881, 160, 61, 16);
 		add(lblTotBricksBreak);
 
 		lblTotPlayGame = new JLabel("-");
+		lblTotPlayGame.setForeground(GlobalVars.textColor);
 		lblTotPlayGame.setBounds(881, 191, 61, 16);
 		add(lblTotPlayGame);
 
 		lblLevel = new JLabel("-");
+		lblLevel.setForeground(GlobalVars.textColor);
 		lblLevel.setBounds(881, 219, 61, 16);
 		add(lblLevel);
 

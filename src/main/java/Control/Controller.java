@@ -24,6 +24,8 @@ public class Controller {
     private LevelManager levelManager;
     private GlobalManager globalManager;
 
+    private Level selectedLevel;
+
     public Controller(Window window, MainMenuPanel mainMenuPanel, ImpostazioniPanel impostazioniPanel, GiocaPanel giocaPanel, InformazioniPanel informazioniPanel, ComeSiGiocaPanel comeSiGiocaPanel, EndGameScreen endGameScreen) {
         this.window = window;
 
@@ -40,6 +42,7 @@ public class Controller {
 
         listeners();
     }
+
 
     /* -------------------------------------------------------------------------------------------------------- */
     // Listeners
@@ -120,47 +123,22 @@ public class Controller {
         giocaPanel.getList().addListSelectionListener(e -> giocaPanel.getBtnGioca().setEnabled(true));
 
         giocaPanel.getBtnGioca().addActionListener(e -> {
-            Level selectedLevel = (Level) giocaPanel.getList().getSelectedValue();
+            selectedLevel = (Level) giocaPanel.getList().getSelectedValue();
             GamePlay gamePlay = new GamePlay(selectedLevel, userManager.get(globalManager.getLastUser()));
 
-            // Reset some things
-            giocaPanel.getList().clearSelection();
-            giocaPanel.getBtnGioca().setSelected(false);
-
-            // Custom gameplay listeners for endGame screen
-            gamePlay.addGameplayListener(new GameplayEvents() {
-                @Override
-                public void endMenuOpen(boolean win) {
-                    if(win) {
-                        endGameScreen.getLblWin().setText("Hai vinto!");
-                        endGameScreen.getLblWin().setForeground(Color.GREEN);
-
-                        // Check level best time and edit if necessary
-                        if(selectedLevel.getBestTime() == 0 || gamePlay.getTime() < selectedLevel.getBestTime()) {
-                            selectedLevel.setBestTime(gamePlay.getTime());
-                        }
-                    } else {
-                        endGameScreen.getLblWin().setText("Hai perso!");
-                        endGameScreen.getLblWin().setForeground(Color.RED);
-                    }
-
-                    endGameScreen.getLblBestTimeLevel().setText(GlobalVars.timeParser(selectedLevel.getBestTime()));
-                    endGameScreen.getLblUserTime().setText(gamePlay.getTimeStr());
-
-                    changePanel(endGameScreen);
-                }
-
-                @Override
-                public void inGameMenuClose() {
-                    changePanel(mainMenuPanel);
-                }
-            });
-
-            changePanel(gamePlay);
+            runGamePlay(gamePlay);
         });
 
+        /* -------------------------------------------------------------------------------------------------------- */
+        // endGameScreen
+        /* -------------------------------------------------------------------------------------------------------- */
         endGameScreen.getBtnEsci().addActionListener(ev -> exitSafe());
         endGameScreen.getBtnBackGiocaPanel().addActionListener(ev -> changePanel(giocaPanel));
+        endGameScreen.getBtnPlayAgain().addActionListener(ev -> {
+            GamePlay gamePlay = new GamePlay(selectedLevel, userManager.get(globalManager.getLastUser()));
+
+            runGamePlay(gamePlay);
+        });
 
         /* -------------------------------------------------------------------------------------------------------- */
         // informazioniPanel
@@ -210,5 +188,44 @@ public class Controller {
         impostazioniPanel.getLblLevel().setText(levelManager.parser(user.getLevel()).getName());
         impostazioniPanel.getLblTotBricksBreak().setText("" + user.getTotBricksBreak());
         impostazioniPanel.getLblTotPlayGame().setText("" + user.getTotPlayGame());
+    }
+
+    private void runGamePlay(GamePlay gamePlay) {
+        // Reset some things
+        giocaPanel.getList().clearSelection();
+        giocaPanel.getBtnGioca().setEnabled(false);
+
+        // Custom gameplay listeners for endGame screen
+        gamePlay.addGameplayListener(new GameplayEvents() {
+            @Override
+            public void endMenuOpen(boolean win) {
+                if(win) {
+                    endGameScreen.getLblWin().setText("Hai vinto!");
+                    endGameScreen.getLblWin().setForeground(Color.GREEN);
+
+                    // Check level best time and edit if necessary
+                    if(selectedLevel.getBestTime() == 0 || gamePlay.getTime() < selectedLevel.getBestTime()) {
+                        selectedLevel.setBestTime(gamePlay.getTime());
+                    }
+
+                    userManager.get(globalManager.getLastUser()).setLevel(selectedLevel.getNext_uuid());
+                } else {
+                    endGameScreen.getLblWin().setText("Hai perso!");
+                    endGameScreen.getLblWin().setForeground(Color.RED);
+                }
+
+                endGameScreen.getLblBestTimeLevel().setText(GlobalVars.timeParser(selectedLevel.getBestTime()));
+                endGameScreen.getLblUserTime().setText(gamePlay.getTimeStr());
+
+                changePanel(endGameScreen);
+            }
+
+            @Override
+            public void inGameMenuClose() {
+                changePanel(mainMenuPanel);
+            }
+        });
+
+        changePanel(gamePlay);
     }
 }

@@ -1,5 +1,7 @@
 package View;
 
+import Main.GlobalVars;
+
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -21,14 +23,17 @@ public class GiocaPanel extends JPanel {
 	 * Create the panel.
 	 */
 	public GiocaPanel() {
+		setBackground(GlobalVars.backgroundColor);
 		setLayout(null);
 		
 		lblNewLabel = new JLabel("Selezione livello");
+		lblNewLabel.setForeground(GlobalVars.textColor);
 		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 24));
 		lblNewLabel.setBounds(590, 64, 186, 30);
 		add(lblNewLabel);
 		
 		panel = new JPanel();
+		panel.setBackground(GlobalVars.backgroundColor);
 		panel.setBounds(64, 158, 1238, 453);
 		add(panel);
 		panel.setLayout(new BorderLayout(0, 0));
@@ -41,6 +46,8 @@ public class GiocaPanel extends JPanel {
 		panel.add(scrollPane, BorderLayout.CENTER);
 		
 		list = new JList();
+		list.setBackground(GlobalVars.backgroundColorAlt);
+		list.setForeground(GlobalVars.textColor);
 		scrollPane.setViewportView(list);
 		
 		btnTornaIndietro = new JButton("<- Torna indietro");

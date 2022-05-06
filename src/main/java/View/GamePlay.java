@@ -109,7 +109,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
 
         // init
         if(!play && time == 0) {
-            g.setColor(GlobalVars.initialTextColor);
+            g.setColor(GlobalVars.textColor);
             g.setFont(new Font("serif", Font.BOLD, 20));
             g.drawString("Premi SPACE per iniziare a giocare!", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Premi SPACE per iniziare a giocare!") / 2, GlobalVars.frameHeight / 2);
 
@@ -155,8 +155,6 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         }
 
         g.dispose();
-
-
     }
 
     public String getTimeStr() {
@@ -227,7 +225,11 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         for (int i = 0; i < level.getMap().length; i++) {
             for (int j = 0; j < level.getMap()[0].length; j++) {
                 if (level.getMap()[i][j] != 0) { // Create the white box if isn't already broken
-                    g.setColor(GlobalVars.brickColor);
+                    if(level.getMap()[i][j] == 1) {
+                        g.setColor(GlobalVars.brickColor);
+                    } else if(level.getMap()[i][j] == 2) {
+                        g.setColor(GlobalVars.extraBrickColor);
+                    }
 
                     g.fillRect(j * GlobalVars.brickWidth + 80, i * GlobalVars.brickHeight + 50, GlobalVars.brickWidth, GlobalVars.brickHeight);
                     // this is just to show separate brick, game can still run without it
@@ -392,10 +394,14 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
                     Rectangle ballRect = new Rectangle(ballposX, ballposY, 20, 20);
 
                     if (ballRect.intersects(brickRect)) {
-                        breakBrick(i, j);
-                        score += 5;
-                        level.removeBrick();
+                        if(level.getMap()[i][j] == 1) {
+                            score += 5;
+                        } else if(level.getMap()[i][j] == 2) {
+                            score += 10;
+                        }
 
+                        breakBrick(i, j);
+                        level.removeBrick();
                         playSound("hit.wav");
 
                         // when ball hit right or left of brick
