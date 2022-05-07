@@ -40,6 +40,8 @@ public class Controller {
         this.levelManager = new LevelManager();
         this.globalManager = new GlobalManager(GlobalVars.dirBase + "global.json");
 
+        this.selectedLevel = null;
+
         listeners();
     }
 
@@ -129,6 +131,13 @@ public class Controller {
             runGamePlay(gamePlay);
         });
 
+        giocaPanel.getBtnStoria().addActionListener(e -> {
+            selectedLevel = levelManager.parser(userManager.get(globalManager.getLastUser()).getLevel());
+            GamePlay gamePlay = new GamePlay(selectedLevel, userManager.get(globalManager.getLastUser()));
+
+            runGamePlay(gamePlay);
+        });
+
         /* -------------------------------------------------------------------------------------------------------- */
         // endGameScreen
         /* -------------------------------------------------------------------------------------------------------- */
@@ -209,6 +218,10 @@ public class Controller {
                     }
 
                     userManager.get(globalManager.getLastUser()).setLevel(selectedLevel.getNext_uuid());
+
+                    if(userManager.get(globalManager.getLastUser()).getLevel().equals("-1")) {
+                        giocaPanel.getBtnStoria().setEnabled(false);
+                    }
                 } else {
                     endGameScreen.getLblWin().setText("Hai perso!");
                     endGameScreen.getLblWin().setForeground(Color.RED);

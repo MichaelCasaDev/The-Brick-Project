@@ -18,6 +18,8 @@ public class GiocaPanel extends JPanel {
 	private JScrollPane scrollPane;
 	private JList list;
 	private JButton btnTornaIndietro;
+	private JPanel panel_1;
+	private JButton btnStoria;
 
 	/**
 	 * Create the panel.
@@ -38,10 +40,6 @@ public class GiocaPanel extends JPanel {
 		add(panel);
 		panel.setLayout(new BorderLayout(0, 0));
 		
-		btnGioca = new JButton("Avvia livello");
-		btnGioca.setEnabled(false);
-		panel.add(btnGioca, BorderLayout.SOUTH);
-		
 		scrollPane = new JScrollPane();
 		panel.add(scrollPane, BorderLayout.CENTER);
 		
@@ -50,10 +48,20 @@ public class GiocaPanel extends JPanel {
 		list.setForeground(GlobalVars.textColor);
 		scrollPane.setViewportView(list);
 		
+		panel_1 = new JPanel();
+		panel_1.setBackground(GlobalVars.backgroundColor);
+		panel.add(panel_1, BorderLayout.SOUTH);
+		
+		btnGioca = new JButton("Avvia livello");
+		panel_1.add(btnGioca);
+		btnGioca.setEnabled(false);
+		
+		btnStoria = new JButton("Avvia Storia");
+		panel_1.add(btnStoria);
+		
 		btnTornaIndietro = new JButton("<- Torna indietro");
 		btnTornaIndietro.setBounds(64, 675, 200, 29);
 		add(btnTornaIndietro);
-
 	}
 
 	public JButton getBtnGioca() {
@@ -66,5 +74,9 @@ public class GiocaPanel extends JPanel {
 
 	public JButton getBtnTornaIndietro() {
 		return btnTornaIndietro;
-	}	
+	}
+
+	public JButton getBtnStoria() {
+		return btnStoria;
+	}
 }

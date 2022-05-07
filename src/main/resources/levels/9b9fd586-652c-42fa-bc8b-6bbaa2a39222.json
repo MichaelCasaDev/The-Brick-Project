@@ -3,8 +3,8 @@
   "next_uuid": "79eb8dfa-5de3-46d6-ac13-96658e7bacd5",
   "name": "Level 0",
   "ballSpeed": 8,
-  "totBricks": 120,
   "bestTime": 0,
+  "paddleSpeed": 15,
   "map": [
     1,
     1,

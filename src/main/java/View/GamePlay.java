@@ -45,7 +45,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
     private int ballposX;
     private int ballposY;
     private int ballXdir = -1;
-    private int ballYdir = -2;
+    private double ballYdir = -2;
 
     /* -------------------------------------------------------------------------------------------------------- */
      // Game logic form here!
@@ -184,13 +184,13 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
     // Move paddle to left
     private void moveLeft() {
         play = true;
-        paddle -= 15;
+        paddle -= level.getPaddleSpeed();
     }
 
     // Move paddle to right
     private void moveRight() {
         play = true;
-        paddle += 15;
+        paddle += level.getPaddleSpeed();
     }
 
     // Generate random ball position
@@ -289,7 +289,11 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         // to start the game
         if (e.getKeyCode() == KeyEvent.VK_SPACE && !play && time == 0) {
             play = true;
-            gameTimeThread.start();
+            if(gameTimeThread.isAlive()) {
+                semaphore.release();
+            } else {
+                gameTimeThread.start();
+            }
 
             return;
         }
@@ -358,8 +362,6 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
 
             level.reloadMap();
             generateBallPosition();
-
-            return;
         }
     }
 
@@ -375,10 +377,20 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
             return;
         }
 
-        // check ball collision with the paddle
-        if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(paddle, GlobalVars.frameHeight - 8 - 64, 200, 8))
+        // check ball collision with the paddle ---------- [50 - 100 - 50]
+        if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(paddle, GlobalVars.frameHeight - 8 - 64, 50, 8))
+                && ballYdir > 0) {
+            ballYdir = -1.1*ballYdir;
+
+            playSound("hit_paddle.wav");
+        } else if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(paddle + 50, GlobalVars.frameHeight - 8 - 64, 100, 8))
                 && ballYdir > 0) {
             ballYdir = -ballYdir;
+
+            playSound("hit_paddle.wav");
+        } else if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(paddle + 150, GlobalVars.frameHeight - 8 - 64, 50, 8))
+                && ballYdir > 0) {
+            ballYdir = -1.1*ballYdir;
 
             playSound("hit_paddle.wav");
         }

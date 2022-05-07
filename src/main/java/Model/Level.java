@@ -13,8 +13,7 @@ public class Level {
 	private String uuid;
 	private String next_uuid;
 	private String name;
-	private String path;
-	private long totBricks;
+	private long paddleSpeed;
 	private long breakBricks;
 	private long ballSpeed;
 	private long bestTime;
@@ -33,8 +32,8 @@ public class Level {
 			String uuid = (String) jsonFile.get("uuid");
 			String next_uuid = (String) jsonFile.get("next_uuid");
 			long ballSpeed = (long) jsonFile.get("ballSpeed");
-			long totBricks = (long) jsonFile.get("totBricks");
 			long bestTime = (long) jsonFile.get("bestTime");
+			long paddleSpeed = (long) jsonFile.get("paddleSpeed");
 
 			/* ##############################
 			 * Save data from parsed JSON File
@@ -42,11 +41,9 @@ public class Level {
 			this.uuid = uuid;
 			this.next_uuid = next_uuid;
 			this.name = name;
-			this.path = path;
-			this.totBricks = totBricks;
-			this.breakBricks = totBricks;
 			this.ballSpeed = ballSpeed;
 			this.bestTime = bestTime;
+			this.paddleSpeed = paddleSpeed;
 			this.map = new int[GlobalVars.gameRows][GlobalVars.gameCols];
 			this.mapJSON = map;
 
@@ -54,10 +51,6 @@ public class Level {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public String getUUID() {
-		return uuid;
 	}
 
 	public String getNext_uuid() {
@@ -68,16 +61,12 @@ public class Level {
 		return name;
 	}
 
-	public String getPath() {
-		return path;
-	}
-
-	public long getTotBricks() {
-		return totBricks;
-	}
-
 	public long getBallSpeed() {
 		return ballSpeed;
+	}
+
+	public long getPaddleSpeed() {
+		return paddleSpeed;
 	}
 
 	public int[][] getMap() {
@@ -112,6 +101,7 @@ public class Level {
 				int block = Integer.parseInt(mapJSON.get(pos).toString());
 				pos++;
 
+				this.breakBricks += block;
 				this.map[i][j] = block;
 			}
 		}
@@ -124,7 +114,6 @@ public class Level {
 		jsonObj.put("map", mapJSON);
 		jsonObj.put("next_uuid", next_uuid);
 		jsonObj.put("ballSpeed", ballSpeed);
-		jsonObj.put("totBricks", totBricks);
 		jsonObj.put("bestTime", bestTime);
 
 		try (FileWriter file = new FileWriter(GlobalVars.dirBase + "levels/" + uuid + ".json")) {
@@ -136,6 +125,6 @@ public class Level {
 
 	@Override
 	public String toString() {
-		return name;
+		return name + " | Tempo migliore: " + GlobalVars.timeParser(bestTime);
 	}
 }
