@@ -14,6 +14,8 @@ import java.nio.file.StandardCopyOption;
 
 public class MainRunnable {
     public static void main(String[] args){
+        filesManager(); // Generate useful files if not present (levels, users, sounds, global)
+
         /* ##############################
          * Panels
          * ############################## */
@@ -37,8 +39,6 @@ public class MainRunnable {
                 }
             }
         });
-
-        filesManager(); // Generate useful files if not present (levels, users, sounds, global)
 
         window.setPane(mainMenuPanel); // Default contentPane
         new Controller(window, mainMenuPanel, impostazioniPanel, giocaPanel, informazioniPanel, comeSiGiocaPanel, endGameScreen);
@@ -85,6 +85,8 @@ public class MainRunnable {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            System.out.println("All files exists! Running...");
         }
     }
 }

@@ -11,6 +11,10 @@ This game was done for a school project during my IT course with some classmates
 - **Java Swing**: to draw the entire graphic of the game
 - **JSON Files**: to store levels and users data
 
+## Notes
+
+This program need to be built and run with **JAVA 17**.
+
 ## Contributing
 
 Feel free to fork and made a better version of it!
