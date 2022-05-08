@@ -377,20 +377,10 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
             return;
         }
 
-        // check ball collision with the paddle ---------- [50 - 100 - 50]
-        if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(paddle, GlobalVars.frameHeight - 8 - 64, 50, 8))
-                && ballYdir > 0) {
-            ballYdir = -1.1*ballYdir;
-
-            playSound("hit_paddle.wav");
-        } else if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(paddle + 50, GlobalVars.frameHeight - 8 - 64, 100, 8))
+        // check ball collision with the paddle
+        if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(paddle, GlobalVars.frameHeight - 8 - 64, 200, 8))
                 && ballYdir > 0) {
             ballYdir = -ballYdir;
-
-            playSound("hit_paddle.wav");
-        } else if (new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(paddle + 150, GlobalVars.frameHeight - 8 - 64, 50, 8))
-                && ballYdir > 0) {
-            ballYdir = -1.1*ballYdir;
 
             playSound("hit_paddle.wav");
         }

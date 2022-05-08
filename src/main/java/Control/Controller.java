@@ -204,6 +204,8 @@ public class Controller {
         giocaPanel.getList().clearSelection();
         giocaPanel.getBtnGioca().setEnabled(false);
 
+        window.setTitle("The Brick - " + selectedLevel.getName());
+
         // Custom gameplay listeners for endGame screen
         gamePlay.addGameplayListener(new GameplayEvents() {
             @Override
