@@ -5,7 +5,6 @@ import Model.GlobalManager;
 import Model.LevelManager;
 import Model.UserManager;
 import View.*;
-import View.EndGameScreen;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -19,9 +18,9 @@ public class MainRunnable {
     public static void main(String[] args){
         filesManager(); // Generate useful files if not present (levels, users, sounds, global)
 
-        /* ##############################
-         * Panels
-         * ############################## */
+        /* ---------------------------------------------------------------------------------------------------------------- */
+        // Panels
+        /* ---------------------------------------------------------------------------------------------------------------- */
         MainMenuPanel mainMenuPanel = new MainMenuPanel();
         ImpostazioniPanel impostazioniPanel = new ImpostazioniPanel();
         GiocaPanel giocaPanel = new GiocaPanel();
@@ -29,17 +28,19 @@ public class MainRunnable {
         ComeSiGiocaPanel comeSiGiocaPanel = new ComeSiGiocaPanel();
         EndGameScreen endGameScreen = new EndGameScreen();
 
+        /* ---------------------------------------------------------------------------------------------------------------- */
+
         UserManager userManager = new UserManager();
         LevelManager levelManager = new LevelManager();
         GlobalManager globalManager = new GlobalManager(GlobalVars.dirBase + "global.json");
 
-        /* ##############################
-         * Main Logic
-         * ############################## */
+        /* ---------------------------------------------------------------------------------------------------------------- */
+        // Main Logic
+        /* ---------------------------------------------------------------------------------------------------------------- */
         Window window = new Window(new WindowAdapter() { // Window for everything with custom close method
             @Override
             public void windowClosing(WindowEvent e) {
-                int exitConfirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler uscire? Ogni progresso non salvato verrà perso!", "Esci", JOptionPane.CLOSED_OPTION);
+                int exitConfirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler uscire? Ogni progresso non salvato verrà perso!", "Esci", JOptionPane.PLAIN_MESSAGE);
 
                 if(exitConfirm == 0) {
                     System.exit(0);

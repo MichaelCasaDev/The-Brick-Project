@@ -82,7 +82,7 @@ public class Controller {
             mainMenuPanel.getLblUsername().setText("Benvenuto: " + userManager.get(globalManager.getLastUser()).toString());
 
             // Say saved to the user
-            JOptionPane.showMessageDialog(null, "Dati aggiornati con successo!", "Salva impostazioni", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Dati aggiornati con successo!", "Salva impostazioni", JOptionPane.PLAIN_MESSAGE);
         });
         impostazioniPanel.getBtnReset().addActionListener((e) -> {
             userManager.get(globalManager.getLastUser()).setLevel(globalManager.getLevel0());
@@ -92,7 +92,7 @@ public class Controller {
             reloadUserData(false);
 
             // Say reset to the user
-            JOptionPane.showMessageDialog(null, "Statistiche reimpostate con successo!", "Reset statistiche", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Statistiche reimpostate con successo!", "Reset statistiche", JOptionPane.PLAIN_MESSAGE);
         });
         impostazioniPanel.getComboBoxUtenti().addActionListener(e -> {
             // Update displayed information
@@ -111,9 +111,13 @@ public class Controller {
         impostazioniPanel.getBtnRimuovi().addActionListener(e -> {
             // Update displayed information
             if(impostazioniPanel.getComboBoxUtenti().getSelectedItem() != null){
-                userManager.remove((User) impostazioniPanel.getComboBoxUtenti().getSelectedItem());
+                if(userManager.getList().size() != 1) {
+                    userManager.remove((User) impostazioniPanel.getComboBoxUtenti().getSelectedItem());
 
-                reloadUserData(true);
+                    reloadUserData(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Non puoi rimuovere l'utente (è necessario averne minimo 1)", "Rimuovi utente", JOptionPane.PLAIN_MESSAGE);
+                }
             }
         });
 
@@ -173,7 +177,7 @@ public class Controller {
     }
 
     private void exitSafe() {
-        int exitConfirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler uscire? Ogni progresso non salvato verrà perso!", "Esci", JOptionPane.DEFAULT_OPTION);
+        int exitConfirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler uscire? Ogni progresso non salvato verrà perso!", "Esci", JOptionPane.PLAIN_MESSAGE);
 
         if(exitConfirm == 0) {
             System.exit(0);
