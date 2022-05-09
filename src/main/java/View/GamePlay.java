@@ -402,8 +402,8 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
                             score += 10;
                         }
 
+                        level.removeBrick(i, j);
                         breakBrick(i, j);
-                        level.removeBrick();
                         playSound("hit.wav");
 
                         // when ball hit right or left of brick

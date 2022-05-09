@@ -46,6 +46,7 @@ public class Level {
 			this.paddleSpeed = paddleSpeed;
 			this.map = new int[GlobalVars.gameRows][GlobalVars.gameCols];
 			this.mapJSON = map;
+			this.breakBricks = 0;
 
 			reloadMap();
 		} catch(Exception e) {
@@ -73,8 +74,8 @@ public class Level {
 		return map;
 	}
 
-	public void removeBrick() {
-		breakBricks--;
+	public void removeBrick(int i, int j) {
+		breakBricks -= map[i][j];
 	}
 
 	public long getBreakBricks() {
@@ -96,6 +97,8 @@ public class Level {
 		 * Generate map from JSON Array
 		 * ############################## */
 		int pos = 0;
+		this.breakBricks = 0;
+
 		for (int i = 0; i < GlobalVars.gameRows; i++) {
 			for (int j = 0; j < GlobalVars.gameCols; j++) {
 				int block = Integer.parseInt(mapJSON.get(pos).toString());

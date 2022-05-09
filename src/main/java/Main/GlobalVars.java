@@ -1,6 +1,6 @@
 package Main;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.concurrent.TimeUnit;
 
 public class GlobalVars {

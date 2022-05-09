@@ -11,22 +11,22 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Controller {
-    private Window window;
+    private final Window window;
 
-    private MainMenuPanel mainMenuPanel;
-    private ImpostazioniPanel impostazioniPanel;
-    private GiocaPanel giocaPanel;
-    private InformazioniPanel informazioniPanel;
-    private ComeSiGiocaPanel comeSiGiocaPanel;
-    private EndGameScreen endGameScreen;
+    private final MainMenuPanel mainMenuPanel;
+    private final ImpostazioniPanel impostazioniPanel;
+    private final GiocaPanel giocaPanel;
+    private final InformazioniPanel informazioniPanel;
+    private final ComeSiGiocaPanel comeSiGiocaPanel;
+    private final EndGameScreen endGameScreen;
 
-    private UserManager userManager;
-    private LevelManager levelManager;
-    private GlobalManager globalManager;
+    private final UserManager userManager;
+    private final LevelManager levelManager;
+    private final GlobalManager globalManager;
 
     private Level selectedLevel;
 
-    public Controller(Window window, MainMenuPanel mainMenuPanel, ImpostazioniPanel impostazioniPanel, GiocaPanel giocaPanel, InformazioniPanel informazioniPanel, ComeSiGiocaPanel comeSiGiocaPanel, EndGameScreen endGameScreen) {
+    public Controller(Window window, MainMenuPanel mainMenuPanel, ImpostazioniPanel impostazioniPanel, GiocaPanel giocaPanel, InformazioniPanel informazioniPanel, ComeSiGiocaPanel comeSiGiocaPanel, EndGameScreen endGameScreen, UserManager userManager, LevelManager levelManager, GlobalManager globalManager) {
         this.window = window;
 
         this.mainMenuPanel = mainMenuPanel;
@@ -36,9 +36,9 @@ public class Controller {
         this.comeSiGiocaPanel = comeSiGiocaPanel;
         this.endGameScreen = endGameScreen;
 
-        this.userManager = new UserManager();
-        this.levelManager = new LevelManager();
-        this.globalManager = new GlobalManager(GlobalVars.dirBase + "global.json");
+        this.userManager = userManager;
+        this.levelManager = levelManager;
+        this.globalManager = globalManager;
 
         this.selectedLevel = null;
 
@@ -125,7 +125,7 @@ public class Controller {
         giocaPanel.getList().addListSelectionListener(e -> giocaPanel.getBtnGioca().setEnabled(true));
 
         giocaPanel.getBtnGioca().addActionListener(e -> {
-            selectedLevel = (Level) giocaPanel.getList().getSelectedValue();
+            selectedLevel = giocaPanel.getList().getSelectedValue();
             GamePlay gamePlay = new GamePlay(selectedLevel, userManager.get(globalManager.getLastUser()));
 
             runGamePlay(gamePlay);
@@ -173,7 +173,7 @@ public class Controller {
     }
 
     private void exitSafe() {
-        int exitConfirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler uscire? Ogni progresso non salvato verrà perso!", "Esci", JOptionPane.CLOSED_OPTION);
+        int exitConfirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler uscire? Ogni progresso non salvato verrà perso!", "Esci", JOptionPane.DEFAULT_OPTION);
 
         if(exitConfirm == 0) {
             System.exit(0);

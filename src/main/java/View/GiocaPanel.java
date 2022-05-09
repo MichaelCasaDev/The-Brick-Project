@@ -1,6 +1,7 @@
 package View;
 
 import Main.GlobalVars;
+import Model.Level;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -9,14 +10,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JButton;
 import java.awt.BorderLayout;
-import javax.swing.UIManager;
 
 public class GiocaPanel extends JPanel {
 	private JLabel lblNewLabel;
 	private JButton btnGioca;
 	private JPanel panel;
 	private JScrollPane scrollPane;
-	private JList list;
+	private JList<Level> list;
 	private JButton btnTornaIndietro;
 	private JPanel panel_1;
 	private JButton btnStoria;
@@ -43,7 +43,7 @@ public class GiocaPanel extends JPanel {
 		scrollPane = new JScrollPane();
 		panel.add(scrollPane, BorderLayout.CENTER);
 		
-		list = new JList();
+		list = new JList<>();
 		list.setBackground(GlobalVars.backgroundColorAlt);
 		list.setForeground(GlobalVars.textColor);
 		scrollPane.setViewportView(list);
@@ -68,7 +68,7 @@ public class GiocaPanel extends JPanel {
 		return btnGioca;
 	}
 
-	public JList getList() {
+	public JList<Level> getList() {
 		return list;
 	}
 

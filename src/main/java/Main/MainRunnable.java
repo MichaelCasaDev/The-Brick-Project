@@ -1,6 +1,9 @@
 package Main;
 
 import Control.Controller;
+import Model.GlobalManager;
+import Model.LevelManager;
+import Model.UserManager;
 import View.*;
 import View.EndGameScreen;
 
@@ -26,6 +29,10 @@ public class MainRunnable {
         ComeSiGiocaPanel comeSiGiocaPanel = new ComeSiGiocaPanel();
         EndGameScreen endGameScreen = new EndGameScreen();
 
+        UserManager userManager = new UserManager();
+        LevelManager levelManager = new LevelManager();
+        GlobalManager globalManager = new GlobalManager(GlobalVars.dirBase + "global.json");
+
         /* ##############################
          * Main Logic
          * ############################## */
@@ -41,7 +48,7 @@ public class MainRunnable {
         });
 
         window.setPane(mainMenuPanel); // Default contentPane
-        new Controller(window, mainMenuPanel, impostazioniPanel, giocaPanel, informazioniPanel, comeSiGiocaPanel, endGameScreen);
+        new Controller(window, mainMenuPanel, impostazioniPanel, giocaPanel, informazioniPanel, comeSiGiocaPanel, endGameScreen, userManager, levelManager, globalManager);
     }
 
     private static void filesManager() {

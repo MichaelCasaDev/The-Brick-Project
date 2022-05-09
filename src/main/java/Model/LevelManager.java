@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class LevelManager {
-    private ArrayList<Level> levels;
+    private final ArrayList<Level> levels;
 
     public LevelManager() {
         levels = new ArrayList<>();

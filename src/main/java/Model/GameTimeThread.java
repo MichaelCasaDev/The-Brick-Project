@@ -5,8 +5,8 @@ import View.GamePlay;
 import java.util.concurrent.Semaphore;
 
 public class GameTimeThread extends Thread {
-    private GamePlay gamePlay;
-    private Semaphore semaphore;
+    private final GamePlay gamePlay;
+    private final Semaphore semaphore;
 
     public GameTimeThread(GamePlay gamePlay, Semaphore semaphore) {
         this.gamePlay = gamePlay;
