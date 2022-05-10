@@ -30,6 +30,8 @@ public class LevelManager {
     }
 
     public void loadData() {
+        levels.clear();
+
         final String dirUsers = GlobalVars.dirBase + "levels";
         File folder = new File(dirUsers);
         for(File file : folder.listFiles()) {

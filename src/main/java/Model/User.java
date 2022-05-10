@@ -4,6 +4,7 @@ import Main.GlobalVars;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import javax.swing.*;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class User {
 
 
 		} catch(Exception e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Errore - " + e.getMessage(), "Exception", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
 
@@ -124,7 +125,7 @@ public class User {
 		try (FileWriter file = new FileWriter(GlobalVars.dirBase + "users/" + uuid + ".json")) {
 			file.write(jsonObj.toJSONString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Errore - " + e.getMessage(), "Exception", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
 }

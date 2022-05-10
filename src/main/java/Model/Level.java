@@ -5,6 +5,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import javax.swing.*;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class Level {
 
 			reloadMap();
 		} catch(Exception e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Errore - " + e.getMessage(), "Exception", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
 
@@ -122,7 +123,7 @@ public class Level {
 		try (FileWriter file = new FileWriter(GlobalVars.dirBase + "levels/" + uuid + ".json")) {
 			file.write(jsonObj.toJSONString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Errore - " + e.getMessage(), "Exception", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
 

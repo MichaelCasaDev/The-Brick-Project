@@ -96,7 +96,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
 
         // the score
         g.setColor(GlobalVars.scoreColor);
-        g.setFont(new Font("serif", Font.BOLD, 25));
+        g.setFont(new Font("Lucida Grande", Font.BOLD, 25));
         g.drawString("" + score, GlobalVars.frameWidth - 32 - g.getFontMetrics().stringWidth("" + score), 32);
 
         // the paddle
@@ -110,12 +110,12 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         // init
         if(!play && time == 0) {
             g.setColor(GlobalVars.textColor);
-            g.setFont(new Font("serif", Font.BOLD, 20));
+            g.setFont(new Font("Lucida Grande", Font.BOLD, 20));
             g.drawString("Premi SPACE per iniziare a giocare!", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Premi SPACE per iniziare a giocare!") / 2, GlobalVars.frameHeight / 2);
 
             // the time (fixed)
             g.setColor(GlobalVars.timerColor);
-            g.setFont(new Font("serif", Font.BOLD, 20));
+            g.setFont(new Font("Lucida Grande", Font.BOLD, 20));
             g.drawString("00:00", 32, 32);
         }
 
@@ -124,7 +124,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
             timeStr = GlobalVars.timeParser(time);
 
             g.setColor(GlobalVars.timerColor);
-            g.setFont(new Font("serif", Font.BOLD, 20));
+            g.setFont(new Font("Lucida Grande", Font.BOLD, 20));
             g.drawString(timeStr, 32, 32);
         }
 
@@ -254,22 +254,22 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
 
         // the title
         g.setColor(Color.WHITE);
-        g.setFont(new Font("serif", Font.BOLD, 25));
+        g.setFont(new Font("Lucida Grande", Font.BOLD, 25));
         g.drawString("Pausa", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Pausa")/2, 128);
 
         // the text #1
         g.setColor(Color.WHITE);
-        g.setFont(new Font("serif", Font.BOLD, 18));
+        g.setFont(new Font("Lucida Grande", Font.BOLD, 18));
         g.drawString("Premi ESC per continuare a giocare", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Premi ESC per continuare a giocare")/2, 256);
 
         // the text #2
         g.setColor(Color.WHITE);
-        g.setFont(new Font("serif", Font.BOLD, 18));
+        g.setFont(new Font("Lucida Grande", Font.BOLD, 18));
         g.drawString("Premi SPACE per ricominciare la partita", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Premi SPACE per ricominciare la partita")/2, 288);
 
         // the text #3
         g.setColor(Color.WHITE);
-        g.setFont(new Font("serif", Font.BOLD, 18));
+        g.setFont(new Font("Lucida Grande", Font.BOLD, 18));
         g.drawString("Premi ENTER per chiudere la partita", GlobalVars.frameWidth / 2 - g.getFontMetrics().stringWidth("Premi ENTER per chiudere la partita")/2, 352);
     }
 

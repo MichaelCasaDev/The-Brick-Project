@@ -120,6 +120,21 @@ public class Controller {
                 }
             }
         });
+        impostazioniPanel.getBtnRicreaFile().addActionListener(e -> {
+            int i = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler ricreare i file esistenti? Tutti i dati verranno persi!", "Ricrea file", JOptionPane.PLAIN_MESSAGE);
+
+            // Recreate all files (levels, users, sounds, global, images)
+            if(i == 0) {
+                GlobalVars.filesManager(true);
+                userManager.loadData();
+                levelManager.loadData();
+                globalManager.loadData();
+
+                reloadUserData(true);
+
+                JOptionPane.showMessageDialog(null, "File ricreati!", "Ricrea file", JOptionPane.PLAIN_MESSAGE);
+            }
+        });
 
         /* -------------------------------------------------------------------------------------------------------- */
         // giocaPanel
@@ -132,25 +147,14 @@ public class Controller {
             selectedLevel = giocaPanel.getList().getSelectedValue();
             GamePlay gamePlay = new GamePlay(selectedLevel, userManager.get(globalManager.getLastUser()));
 
-            runGamePlay(gamePlay);
+            runGamePlay(gamePlay, false);
         });
 
         giocaPanel.getBtnStoria().addActionListener(e -> {
             selectedLevel = levelManager.parser(userManager.get(globalManager.getLastUser()).getLevel());
             GamePlay gamePlay = new GamePlay(selectedLevel, userManager.get(globalManager.getLastUser()));
 
-            runGamePlay(gamePlay);
-        });
-
-        /* -------------------------------------------------------------------------------------------------------- */
-        // endGameScreen
-        /* -------------------------------------------------------------------------------------------------------- */
-        endGameScreen.getBtnEsci().addActionListener(ev -> exitSafe());
-        endGameScreen.getBtnBackGiocaPanel().addActionListener(ev -> changePanel(giocaPanel));
-        endGameScreen.getBtnPlayAgain().addActionListener(ev -> {
-            GamePlay gamePlay = new GamePlay(selectedLevel, userManager.get(globalManager.getLastUser()));
-
-            runGamePlay(gamePlay);
+            runGamePlay(gamePlay, true);
         });
 
         /* -------------------------------------------------------------------------------------------------------- */
@@ -196,6 +200,7 @@ public class Controller {
 
         mainMenuPanel.getLblUsername().setText("Benvenuto: " + user.toString());
 
+        impostazioniPanel.getComboBoxUtenti().setSelectedItem(user);
         impostazioniPanel.getTextFieldUsername().setText(user.getUsername());
         impostazioniPanel.getChckbxSuoni().setSelected(user.getSounds());
         impostazioniPanel.getLblLevel().setText(levelManager.parser(user.getLevel()).getName());
@@ -203,7 +208,7 @@ public class Controller {
         impostazioniPanel.getLblTotPlayGame().setText("" + user.getTotPlayGame());
     }
 
-    private void runGamePlay(GamePlay gamePlay) {
+    private void runGamePlay(GamePlay gamePlay, boolean storyMode) {
         // Reset some things
         giocaPanel.getList().clearSelection();
         giocaPanel.getBtnGioca().setEnabled(false);
@@ -214,6 +219,21 @@ public class Controller {
         gamePlay.addGameplayListener(new GameplayEvents() {
             @Override
             public void endMenuOpen(boolean win) {
+                User user = userManager.get(globalManager.getLastUser());
+
+                /* -------------------------------------------------------------------------------------------------------- */
+                // endGameScreen
+                /* -------------------------------------------------------------------------------------------------------- */
+                endGameScreen.getBtnEsci().addActionListener(ev -> exitSafe());
+                endGameScreen.getBtnBackGiocaPanel().addActionListener(ev -> changePanel(giocaPanel));
+                endGameScreen.getBtnPlayAgain().addActionListener(ev -> {
+                    GamePlay gamePlay = new GamePlay(selectedLevel, user);
+
+                    runGamePlay(gamePlay, storyMode);
+                });
+
+                /* -------------------------------------------------------------------------------------------------------- */
+
                 if(win) {
                     endGameScreen.getLblWin().setText("Hai vinto!");
                     endGameScreen.getLblWin().setForeground(Color.GREEN);
@@ -223,9 +243,9 @@ public class Controller {
                         selectedLevel.setBestTime(gamePlay.getTime());
                     }
 
-                    userManager.get(globalManager.getLastUser()).setLevel(selectedLevel.getNext_uuid());
+                    user.setLevel(selectedLevel.getNext_uuid());
 
-                    if(userManager.get(globalManager.getLastUser()).getLevel().equals("-1")) {
+                    if(userManager.get(globalManager.getLastUser()).getLevel().equals("-1") && storyMode) {
                         giocaPanel.getBtnStoria().setEnabled(false);
                     }
                 } else {

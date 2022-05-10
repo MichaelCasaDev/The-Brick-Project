@@ -2,12 +2,9 @@ package View;
 
 import Main.GlobalVars;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
+import javax.swing.*;
 import java.awt.Font;
 import java.awt.Color;
-import javax.swing.JButton;
-import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 public class MainMenuPanel extends JPanel {
@@ -57,7 +54,7 @@ public class MainMenuPanel extends JPanel {
 		lblNewLabel_1.setBounds(916, 688, 386, 16);
 		add(lblNewLabel_1);
 		
-		lblNewLabel_2 = new JLabel("[image of game here]");
+		lblNewLabel_2 = new JLabel(new ImageIcon(GlobalVars.dirBase + "images/icon.png"));
 		lblNewLabel_2.setForeground(Color.ORANGE);
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_2.setBounds(284, 64, 1076, 554);

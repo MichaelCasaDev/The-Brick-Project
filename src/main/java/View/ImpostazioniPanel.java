@@ -33,6 +33,7 @@ public class ImpostazioniPanel extends JPanel {
 	private JButton btnAggiungi;
 	private JButton btnSalva;
 	private JButton btnRimuovi;
+	private JButton btnRicreaFile;
 
 	/**
 	 * Create the panel.
@@ -136,6 +137,10 @@ public class ImpostazioniPanel extends JPanel {
 		btnRimuovi.setBounds(276, 186, 45, 29);
 		add(btnRimuovi);
 
+		btnRicreaFile = new JButton("Ricrea file");
+		btnRicreaFile.setBounds(367, 285, 204, 29);
+		add(btnRicreaFile);
+
 	}
 
 	public JComboBox getComboBoxUtenti() {
@@ -180,5 +185,9 @@ public class ImpostazioniPanel extends JPanel {
 
 	public JButton getBtnSalva() {
 		return btnSalva;
+	}
+
+	public JButton getBtnRicreaFile() {
+		return btnRicreaFile;
 	}
 }

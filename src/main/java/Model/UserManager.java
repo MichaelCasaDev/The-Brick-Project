@@ -39,6 +39,8 @@ public class UserManager {
     }
 
     public void loadData() {
+        users.clear();
+        
         final String dirUsers = GlobalVars.dirBase + "users";
         File folder = new File(dirUsers);
 

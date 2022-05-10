@@ -1,11 +1,9 @@
 package View;
 
 import Main.GlobalVars;
-import Main.MainRunnable;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
-import java.net.URL;
 
 import javax.swing.*;
 
@@ -27,8 +25,7 @@ public class Window extends JFrame {
 		setLocationRelativeTo(null);
 		setResizable(false);
 
-		URL resource = MainRunnable.class.getClassLoader().getResource("icon.png");
-		if(resource != null) setIconImage(new ImageIcon(resource).getImage());
+		setIconImage(new ImageIcon(GlobalVars.dirBase + "images/icon.png").getImage());
 
 		contentPane = new JPanel();
 		contentPane.setLayout(new BorderLayout(0, 0));

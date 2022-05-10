@@ -2,6 +2,7 @@ package Model;
 
 import View.GamePlay;
 
+import javax.swing.*;
 import java.util.concurrent.Semaphore;
 
 public class GameTimeThread extends Thread {
@@ -22,7 +23,7 @@ public class GameTimeThread extends Thread {
 
                 sleep(1000);
             } catch(Exception e) {
-                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Errore - " + e.getMessage(), "Exception", JOptionPane.PLAIN_MESSAGE);
             }
         }
     }
