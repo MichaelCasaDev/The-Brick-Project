@@ -206,6 +206,10 @@ public class Controller {
         impostazioniPanel.getLblLevel().setText(levelManager.parser(user.getLevel()).getName());
         impostazioniPanel.getLblTotBricksBreak().setText("" + user.getTotBricksBreak());
         impostazioniPanel.getLblTotPlayGame().setText("" + user.getTotPlayGame());
+
+        if(userManager.get(globalManager.getLastUser()).getLevel().equals("-1")) {
+            giocaPanel.getBtnStoria().setEnabled(false);
+        }
     }
 
     private void runGamePlay(GamePlay gamePlay, boolean storyMode) {
@@ -243,10 +247,10 @@ public class Controller {
                         selectedLevel.setBestTime(gamePlay.getTime());
                     }
 
-                    user.setLevel(selectedLevel.getNext_uuid());
-
                     if(userManager.get(globalManager.getLastUser()).getLevel().equals("-1") && storyMode) {
                         giocaPanel.getBtnStoria().setEnabled(false);
+                    } else if(!userManager.get(globalManager.getLastUser()).getLevel().equals("-1") && storyMode) {
+                        user.setLevel(selectedLevel.getNext_uuid());
                     }
                 } else {
                     endGameScreen.getLblWin().setText("Hai perso!");
