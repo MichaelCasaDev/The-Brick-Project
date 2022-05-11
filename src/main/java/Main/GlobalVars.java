@@ -7,6 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Global variables accessible from everywhere
+ */
 public class GlobalVars {
     public static final String dirBase = System.getProperty("user.dir") + "/theBrickData/";
 
@@ -42,6 +45,11 @@ public class GlobalVars {
 
     /* ---------------------------------------------------------------------------------------------------------------- */
 
+    /**
+     * Parse the time from a long to a String
+     * @param time
+     * @return time parsed as a string
+     */
     public static String timeParser(long time) {
         long timeSeconds = TimeUnit.SECONDS.convert(time, TimeUnit.SECONDS);
         long timeMinutes = TimeUnit.MINUTES.convert(time, TimeUnit.SECONDS);
@@ -50,6 +58,10 @@ public class GlobalVars {
         return (timeMinutes >= 10 ? timeMinutes : ("0" + timeMinutes)) + ":" + (realTimeSeconds >= 10 ? "" : "0") + realTimeSeconds;
     }
 
+    /**
+     * File manager to copy and restore necessary files for the project to work
+     * @param forced
+     */
     public static void filesManager(boolean forced) {
         if(!new File(GlobalVars.dirBase).exists() || forced) {
             System.out.println("Need to create 'The Brick' data folders and files");

@@ -2,5 +2,6 @@
 /out
 /.idea
 /theBrickData
+/doc
 
 .DS_Store

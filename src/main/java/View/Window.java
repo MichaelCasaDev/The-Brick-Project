@@ -12,7 +12,7 @@ public class Window extends JFrame {
 	private JLabel lblNewLabel;
 
 	/**
-	 * Create the frame.
+	 * Create the frame
 	 */
 	public Window(WindowAdapter windowAdapter) {
 		setTitle("The Brick");
@@ -38,6 +38,10 @@ public class Window extends JFrame {
 		setVisible(true);
 	}
 
+	/**
+	 * Set a new panel in the frame
+	 * @param p The new panel to be visualized
+	 */
 	public void setPane(JPanel p) {
 		setContentPane(p);
 

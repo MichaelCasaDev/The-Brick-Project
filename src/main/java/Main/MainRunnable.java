@@ -10,7 +10,14 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * The main
+ */
 public class MainRunnable {
+    /**
+     * The main
+     * @param args no args are used in the program
+     */
     public static void main(String[] args){
         GlobalVars.filesManager(false); // Generate useful files if not present (levels, users, sounds, global files, etc...)
 

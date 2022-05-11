@@ -9,26 +9,45 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Manager of the global.json file
+ */
 public class GlobalManager {
     private String lastUser;
     private String level0;
 
     private String path;
 
+    /**
+     * Constructor
+     * @param path the path of the file
+     */
     public GlobalManager(String path) {
         this.path = path;
 
         loadData();
     }
 
+    /**
+     * Get the last user UUID
+     * @return last user UUID
+     */
     public String getLastUser() {
         return lastUser;
     }
 
+    /**
+     * Get the first level of the game
+     * @return first level UUID
+     */
     public String getLevel0() {
         return level0;
     }
 
+    /**
+     * Change the last user
+     * @param user the new user
+     */
     public void setLastUser(User user) {
         lastUser = user.getUuid();
 
@@ -43,6 +62,9 @@ public class GlobalManager {
         }
     }
 
+    /**
+     * Load data from disk
+     */
     public void loadData() {
         this.lastUser = "";
         this.level0 = "";

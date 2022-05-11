@@ -10,6 +10,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Level
+ */
 public class Level {
 	private String uuid;
 	private String next_uuid;
@@ -21,6 +24,10 @@ public class Level {
 	private int[][] map;
 	private JSONArray mapJSON;
 
+	/**
+	 * Constructor
+	 * @param path the path where files are saved
+	 */
 	public Level(String path) {
 		try (FileReader file = new FileReader(path)) {
 			/* ##############################
@@ -55,44 +62,84 @@ public class Level {
 		}
 	}
 
+	/**
+	 * Get the next level UUID
+	 * @return next level UUID
+	 */
 	public String getNext_uuid() {
 		return next_uuid;
 	}
 
+	/**
+	 * Get the level name
+	 * @return level name
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Get the ball speed
+	 * @return ball speed
+	 */
 	public long getBallSpeed() {
 		return ballSpeed;
 	}
 
+	/**
+	 * Get the paddle speed
+	 * @return paddle speed
+	 */
 	public long getPaddleSpeed() {
 		return paddleSpeed;
 	}
 
+	/**
+	 * Get the map as an int matrix
+	 * @return map int matrix
+	 */
 	public int[][] getMap() {
 		return map;
 	}
 
+	/**
+	 * Remove a broke brick from the total
+	 * @param i row
+	 * @param j column
+	 */
 	public void removeBrick(int i, int j) {
 		breakBricks -= map[i][j];
 	}
 
+	/**
+	 * Get the total broke bricks
+	 * @return total broke bricks
+	 */
 	public long getBreakBricks() {
 		return breakBricks;
 	}
 
+	/**
+	 * Get the current level best time
+	 * @return best time
+	 */
 	public long getBestTime() {
 		return bestTime;
 	}
 
+	/**
+	 * Change the current level best time
+	 * @param bestTime the new best time
+	 */
 	public void setBestTime(long bestTime) {
 		this.bestTime = bestTime;
 
 		saveToJSON();
 	}
 
+	/**
+	 * Reload the matrix map
+	 */
 	public void reloadMap() {
 		/* ##############################
 		 * Generate map from JSON Array
@@ -111,6 +158,9 @@ public class Level {
 		}
 	}
 
+	/**
+	 * Save data to disk
+	 */
 	private void saveToJSON() {
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("uuid", uuid);
@@ -127,6 +177,10 @@ public class Level {
 		}
 	}
 
+	/**
+	 * The to string method
+	 * @return the string of the level
+	 */
 	@Override
 	public String toString() {
 		return name + " | Tempo migliore: " + GlobalVars.timeParser(bestTime);

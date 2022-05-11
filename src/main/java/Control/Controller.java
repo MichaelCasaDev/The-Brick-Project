@@ -10,6 +10,9 @@ import View.Window;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Controller
+ */
 public class Controller {
     private final Window window;
 
@@ -26,6 +29,19 @@ public class Controller {
 
     private Level selectedLevel;
 
+    /**
+     * Constructor
+     * @param window the window object
+     * @param mainMenuPanel the main menu panel
+     * @param impostazioniPanel the impostazioni panel
+     * @param giocaPanel the gioca panel
+     * @param informazioniPanel the informazioni panel
+     * @param comeSiGiocaPanel the come si gioca panel
+     * @param endGameScreen the end game screen
+     * @param userManager the user manager
+     * @param levelManager the level manager
+     * @param globalManager the global manager
+     */
     public Controller(Window window, MainMenuPanel mainMenuPanel, ImpostazioniPanel impostazioniPanel, GiocaPanel giocaPanel, InformazioniPanel informazioniPanel, ComeSiGiocaPanel comeSiGiocaPanel, EndGameScreen endGameScreen, UserManager userManager, LevelManager levelManager, GlobalManager globalManager) {
         this.window = window;
 
@@ -46,9 +62,9 @@ public class Controller {
     }
 
 
-    /* -------------------------------------------------------------------------------------------------------- */
-    // Listeners
-    /* -------------------------------------------------------------------------------------------------------- */
+    /**
+     * Register all the listeners
+     */
     private void listeners() {
         /* -------------------------------------------------------------------------------------------------------- */
         // mainMenuPanel
@@ -171,15 +187,26 @@ public class Controller {
     /* -------------------------------------------------------------------------------------------------------- */
     // Private methods
     /* -------------------------------------------------------------------------------------------------------- */
+
+    /**
+     * Change the current displayed panel to the main menu panel
+     */
     private void backToMainMenu() {
         window.setPane(mainMenuPanel);
         giocaPanel.getBtnGioca().setEnabled(false);
     }
 
+    /**
+     * Change the current panel to a new one
+     * @param newPanel the new panel
+     */
     private void changePanel(JPanel newPanel) {
         window.setPane(newPanel);
     }
 
+    /**
+     * Ask the user to safely close the window
+     */
     private void exitSafe() {
         int exitConfirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler uscire? Ogni progresso non salvato verrà perso!", "Esci", JOptionPane.PLAIN_MESSAGE);
 
@@ -188,6 +215,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Reload the user data to be displayed
+     * @param full if reset also the combobox in the settings panel
+     */
     private void reloadUserData(boolean full) {
         if(full) {
             impostazioniPanel.getComboBoxUtenti().removeAllItems();
@@ -212,6 +243,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Main method to run the game
+     * @param gamePlay the gameplay object
+     * @param storyMode if story mode is enabled
+     */
     private void runGamePlay(GamePlay gamePlay, boolean storyMode) {
         // Reset some things
         giocaPanel.getList().clearSelection();
