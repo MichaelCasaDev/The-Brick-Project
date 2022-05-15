@@ -6,9 +6,9 @@ This game was done for a school project during my IT course with some classmates
 
 ## What we used
 
-- **Maven**: to manage all external packages
-- **Git**: to manage our project team work
-- **Java Swing**: to draw the entire graphic of the game
+- **Maven**: to manage all external packages and project compilations
+- **Git**: to manage our team work project
+- **Java Swing & Graphics**: to draw the entire graphic of the game
 - **JSON Files**: to store levels and users data
 
 ## Notes
