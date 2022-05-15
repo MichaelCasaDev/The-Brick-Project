@@ -13,7 +13,7 @@ This game was done for a school project during my IT course with some classmates
 
 ## Notes
 
-This program need to be built and run with **JAVA 17**.
+This program need to be compiled and run with **JAVA 17**.
 
 ## Contributing
 
