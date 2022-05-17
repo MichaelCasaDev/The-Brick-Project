@@ -1,3 +1,5 @@
+<img src="src/main/resources/images/icon.png" />
+
 # The Brick Project
 
 A simple Java-based game inspired from the original "Breakout".
